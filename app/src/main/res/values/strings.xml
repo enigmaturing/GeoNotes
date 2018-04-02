@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">GeoNotes</string>
+    <string name="title_provider">Verfügbare Provider:</string>
+    <string name="button_lokalisierung_off">LOKALISIERUNG STARTEN</string>
+    <string name="button_lokalisierung_on">LOKALISIERUNG GESTARTET</string>
+    <string name="button_standort">STANDORT ANZEIGEN</string>
+    <string name="title_geodaten_empfangen">Geodaten empfangen:</string>
+    <string-array name="spinner_provider">
+        <item>EXAMPLE1:passive</item>
+        <item>EXAMPLE2:gps</item>
+        <item>EXAMPLE3:network</item>
+    </string-array>
+</resources>
