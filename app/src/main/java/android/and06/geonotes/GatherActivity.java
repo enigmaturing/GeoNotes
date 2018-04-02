@@ -8,6 +8,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -59,6 +60,9 @@ public class GatherActivity extends Activity {
         Spinner spinner = (Spinner) findViewById(R.id.spinnerProviders);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.list_item, providers);
         spinner.setAdapter(adapter);
+        //Associate a listener of the class SpinnerProviderItemSelectedListener to the spinner
+        //in order to be able to get the moment when a item of the spinner is selected
+        spinner.setOnItemSelectedListener(new SpinnerProviderItemSelectedListener());
     }
 
     //When the app is destroyed, we want to stop retrieving information from the gps.
@@ -81,14 +85,37 @@ public class GatherActivity extends Activity {
     // Only so it is possible to instantiate a locationListener object.
     @SuppressLint("MissingPermission")
     public void onToggleButtonClick(View view) {
+        LocationManager locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
         if (((ToggleButton) view).isChecked()) {
-            LocationManager locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5, locationListener);
+            Spinner spinner = (Spinner) findViewById(R.id.spinnerProviders);
+            String provider = (String) spinner.getSelectedItem();
+            locationManager.requestLocationUpdates(provider, 5000, 5, locationListener);
             Log.d(getClass().getSimpleName(), "Lokalisierung gestartet");
         }else{
-            LocationManager locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
             locationManager.removeUpdates(locationListener);
             Log.d(getClass().getSimpleName(), "Lokalisierung beendet");
+        }
+    }
+
+    //This class SpinnerProviderItemSelectedListener implements the Interface OnItemSelectedListener,
+    //and let us create listeners that can be associated to spinners on our activity, to notice when
+    //an item of the spinner has been selected.
+    @SuppressLint("MissingPermission")
+    class SpinnerProviderItemSelectedListener implements AdapterView.OnItemSelectedListener{
+        @Override
+        //When an item of the is selected, we need to stop the flow of gps data and set it again with the new provider
+        public void onItemSelected(AdapterView<?> parent, View view, int pos, long id){
+            if(((ToggleButton) GatherActivity.this.findViewById(R.id.toggle_start)).isChecked()){
+                LocationManager locationManager = (LocationManager) GatherActivity.this.getSystemService(LOCATION_SERVICE);
+                locationManager.removeUpdates(locationListener);
+                String provider = ((TextView) view).getText().toString();
+                locationManager.requestLocationUpdates(provider, 5000, 5, locationListener);
+                Log.i(getClass().getSimpleName(), "Provider changed by the user to: " + provider);
+            }
+        }
+        @Override
+        public void onNothingSelected(AdapterView<?> adapterView) {
+            Log.i(getClass().getSimpleName(), "No item of the spinner was selected");
         }
     }
 }
