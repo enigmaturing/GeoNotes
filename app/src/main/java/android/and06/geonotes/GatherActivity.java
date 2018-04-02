@@ -17,6 +17,8 @@ import java.util.List;
 
 public class GatherActivity extends Activity {
 
+    private final static int MIN_TIME = 5000; //Minimum time between two sets of gps-positions (in ms)
+    private final static int MIN_DISTANCE = 5; //Minimum distance between two sets of gps-positions (in m)
     private final NoteLocationListener locationListener = new NoteLocationListener();
 
     class NoteLocationListener implements LocationListener {
@@ -89,7 +91,7 @@ public class GatherActivity extends Activity {
         if (((ToggleButton) view).isChecked()) {
             Spinner spinner = (Spinner) findViewById(R.id.spinnerProviders);
             String provider = (String) spinner.getSelectedItem();
-            locationManager.requestLocationUpdates(provider, 5000, 5, locationListener);
+            locationManager.requestLocationUpdates(provider, MIN_TIME, MIN_DISTANCE, locationListener);
             Log.d(getClass().getSimpleName(), "Lokalisierung gestartet");
         }else{
             locationManager.removeUpdates(locationListener);
@@ -109,7 +111,7 @@ public class GatherActivity extends Activity {
                 LocationManager locationManager = (LocationManager) GatherActivity.this.getSystemService(LOCATION_SERVICE);
                 locationManager.removeUpdates(locationListener);
                 String provider = ((TextView) view).getText().toString();
-                locationManager.requestLocationUpdates(provider, 5000, 5, locationListener);
+                locationManager.requestLocationUpdates(provider, MIN_TIME, MIN_DISTANCE, locationListener);
                 Log.i(getClass().getSimpleName(), "Provider changed by the user to: " + provider);
             }
         }
