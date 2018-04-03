@@ -60,8 +60,13 @@ public class GatherActivity extends Activity {
         }
         //Show the list of providers on the spinner
         Spinner spinner = (Spinner) findViewById(R.id.spinnerProviders);
+        //Define an adapter with the array of strings "providers" and set it as the source for the spinner
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.list_item, providers);
         spinner.setAdapter(adapter);
+        //Check if gps is available as provider. In that case, select it as default value of the spinner
+        if (providers.contains("gps") == true){
+            spinner.setSelection(providers.indexOf("gps"));
+        }
         //Associate a listener of the class SpinnerProviderItemSelectedListener to the spinner
         //in order to be able to get the moment when a item of the spinner is selected
         spinner.setOnItemSelectedListener(new SpinnerProviderItemSelectedListener());
