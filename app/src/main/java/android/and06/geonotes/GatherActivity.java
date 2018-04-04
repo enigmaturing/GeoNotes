@@ -2,6 +2,7 @@ package android.and06.geonotes;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -131,11 +132,18 @@ public class GatherActivity extends Activity {
         }
     }
 
+    //This method returns information about the selected gps-provider
     String showProperties (LocationManager locationManager, String provider){
         String accuracy = (locationManager.getProvider(provider).getAccuracy() == 1) ? "FINE":"COARSE";
         return ("provider: " + provider + "\n" +
                 "horizontale Genauigkeit: " + accuracy + "\n" +
                 "unterstützt Höhenermittlung: " + (locationManager.getProvider(provider).supportsAltitude()) + "\n" +
                 "erfordert Satellit: " + (locationManager.getProvider(provider).requiresSatellite()));
+    }
+
+    //This method starts a new intent pointing to the NoteMapActivity
+    public void onButtonShowPositionClick (View view){
+        Intent intent = new Intent(this, NoteMapActivity.class);
+        startActivity(intent);
     }
 }
