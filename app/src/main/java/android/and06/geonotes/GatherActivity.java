@@ -70,6 +70,9 @@ public class GatherActivity extends Activity {
         //Associate a listener of the class SpinnerProviderItemSelectedListener to the spinner
         //in order to be able to get the moment when a item of the spinner is selected
         spinner.setOnItemSelectedListener(new SpinnerProviderItemSelectedListener());
+        //Show information of this provider
+        Log.i(getClass().getSimpleName(),
+                showProperties(locationManager, (spinner.getSelectedItem().toString())));
     }
 
     //When the app is destroyed, we want to stop retrieving information from the gps.
@@ -104,7 +107,7 @@ public class GatherActivity extends Activity {
         }
     }
 
-    //This class SpinnerProviderItemSelectedListener implements the Interface OnItemSelectedListener,
+    //The class SpinnerProviderItemSelectedListener implements the Interface OnItemSelectedListener,
     //and let us create listeners that can be associated to spinners on our activity, to notice when
     //an item of the spinner has been selected.
     @SuppressLint("MissingPermission")
@@ -118,11 +121,21 @@ public class GatherActivity extends Activity {
                 String provider = ((TextView) view).getText().toString();
                 locationManager.requestLocationUpdates(provider, MIN_TIME, MIN_DISTANCE, locationListener);
                 Log.i(getClass().getSimpleName(), "Provider changed by the user to: " + provider);
+                //Show information of the selected provider
+                Log.i(getClass().getSimpleName(), showProperties(locationManager, provider));
             }
         }
         @Override
         public void onNothingSelected(AdapterView<?> adapterView) {
             Log.i(getClass().getSimpleName(), "No item of the spinner was selected");
         }
+    }
+
+    String showProperties (LocationManager locationManager, String provider){
+        String accuracy = (locationManager.getProvider(provider).getAccuracy() == 1) ? "FINE":"COARSE";
+        return ("provider: " + provider + "\n" +
+                "horizontale Genauigkeit: " + accuracy + "\n" +
+                "unterstützt Höhenermittlung: " + (locationManager.getProvider(provider).supportsAltitude()) + "\n" +
+                "erfordert Satellit: " + (locationManager.getProvider(provider).requiresSatellite()));
     }
 }
