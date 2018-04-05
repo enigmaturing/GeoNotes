@@ -2,20 +2,33 @@ package android.and06.geonotes;
 
 import android.app.Activity;
 import android.os.Bundle;
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
-public class NoteMapActivity extends Activity {
-    // TODO 1: The behaviour of the toggle-button with the id "toggle_start" has to be implemented.
-    // TODO 2: The behaviour of the button "Standort anzeigen" has to be implemented.
+public class NoteMapActivity extends Activity implements OnMapReadyCallback {
 
     // onCreate just shows the mapview as defined by activity_note_map.xml
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_note_map);
-        ((MapView)findViewById(R.id.mapview)).onCreate(savedInstanceState);
-        //test the method decimalToSexagesimal:
+        MapView mapView = ((MapView)findViewById(R.id.mapview));
+        mapView.onCreate(savedInstanceState);
+        //The method getMapAsync of the mapView-obejct makes it possible or the callback-object
+        // to be triggered when the map is ready to be used.
+        mapView.getMapAsync(this);
+        //Test the method decimalToSexagesimal:
         System.out.println(decimalToSexagesimal(52.514366, 13.350141));
+    }
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        //Show a marker on the map:
+        MarkerOptions options = new MarkerOptions().position(new LatLng(37.422006,-122.084095))
+                                    .title("Mein Standort").snippet("Dies ist ein Infotext");
+        googleMap.addMarker(options);
     }
     @Override
     protected void onResume() {
@@ -64,6 +77,7 @@ public class NoteMapActivity extends Activity {
                 degreesLatitude + "° " + minutesLatitude + "' " +
                 String.format("%.3f", secondsLatitude) + "''" + NOSWlatitude;
     }
+
 }
 
 
