@@ -2,9 +2,13 @@ package android.and06.geonotes;
 
 import android.app.Activity;
 import android.os.Bundle;
+
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -29,6 +33,10 @@ public class NoteMapActivity extends Activity implements OnMapReadyCallback {
         MarkerOptions options = new MarkerOptions().position(new LatLng(37.422006,-122.084095))
                                     .title("Mein Standort").snippet("Dies ist ein Infotext");
         googleMap.addMarker(options);
+        //Center the map on the marker and set the zoom-level to 10.0f
+        CameraPosition cameraPosition = CameraPosition.fromLatLngZoom(new LatLng(37.422006,-122.084095), 10.0f);
+        CameraUpdate update = CameraUpdateFactory.newCameraPosition(cameraPosition);
+        googleMap.moveCamera(update);
     }
     @Override
     protected void onResume() {
