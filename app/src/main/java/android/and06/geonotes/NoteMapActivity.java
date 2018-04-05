@@ -30,11 +30,11 @@ public class NoteMapActivity extends Activity implements OnMapReadyCallback {
     @Override
     public void onMapReady(GoogleMap googleMap) {
         //Show a marker on the map:
-        MarkerOptions options = new MarkerOptions().position(new LatLng(37.422006,-122.084095))
-                                    .title("Mein Standort").snippet("Dies ist ein Infotext");
+        LatLng markerPosition = new LatLng(37.422006,-122.084095);
+        MarkerOptions options = new MarkerOptions().position(markerPosition).title("Mein Standort").snippet("Dies ist ein Infotext");
         googleMap.addMarker(options);
         //Center the map on the marker and set the zoom-level to 10.0f
-        CameraPosition cameraPosition = CameraPosition.fromLatLngZoom(new LatLng(37.422006,-122.084095), 10.0f);
+        CameraPosition cameraPosition = CameraPosition.fromLatLngZoom(markerPosition, 10.0f);
         CameraUpdate update = CameraUpdateFactory.newCameraPosition(cameraPosition);
         googleMap.moveCamera(update);
     }
