@@ -2,20 +2,43 @@ package android.and06.geonotes;
 
 import android.app.Activity;
 import android.os.Bundle;
-import com.google.android.gms.maps.MapView;
 
-public class NoteMapActivity extends Activity {
-    // TODO 1: The behaviour of the toggle-button with the id "toggle_start" has to be implemented.
-    // TODO 2: The behaviour of the button "Standort anzeigen" has to be implemented.
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+
+public class NoteMapActivity extends Activity implements OnMapReadyCallback {
 
     // onCreate just shows the mapview as defined by activity_note_map.xml
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_note_map);
-        ((MapView)findViewById(R.id.mapview)).onCreate(savedInstanceState);
-        //test the method decimalToSexagesimal:
+        MapView mapView = ((MapView)findViewById(R.id.mapview));
+        mapView.onCreate(savedInstanceState);
+        //The method getMapAsync of the mapView-obejct makes it possible or the callback-object
+        // to be triggered when the map is ready to be used.
+        mapView.getMapAsync(this);
+        //Test the method decimalToSexagesimal:
         System.out.println(decimalToSexagesimal(52.514366, 13.350141));
+    }
+    //TODO 08.04.2018 - onMapReady must accept the GPS-Position contained in the intent created by GatherActivity
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        Bundle extras = getIntent().getExtras();
+        //Show a marker on the map:
+        LatLng markerPosition = new LatLng(37.422006,-122.084095);
+        MarkerOptions options = new MarkerOptions().position(markerPosition).title("Mein Standort").snippet("Dies ist ein Infotext");
+        googleMap.addMarker(options);
+        //Center the map on the marker and set the zoom-level to 10.0f
+        CameraPosition cameraPosition = CameraPosition.fromLatLngZoom(markerPosition, 10.0f);
+        CameraUpdate update = CameraUpdateFactory.newCameraPosition(cameraPosition);
+        googleMap.moveCamera(update);
     }
     @Override
     protected void onResume() {
@@ -64,6 +87,7 @@ public class NoteMapActivity extends Activity {
                 degreesLatitude + "° " + minutesLatitude + "' " +
                 String.format("%.3f", secondsLatitude) + "''" + NOSWlatitude;
     }
+
 }
 
 

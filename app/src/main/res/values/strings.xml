@@ -5,6 +5,7 @@
     <string name="button_lokalisierung_on">LOKALISIERUNG GESTARTET</string>
     <string name="button_standort">STANDORT ANZEIGEN</string>
     <string name="title_geodaten_empfangen">Geodaten empfangen:</string>
+    <string name="no_actual_position">unbekannter Standort</string>
     <string-array name="spinner_provider">
         <item>EXAMPLE1:passive</item>
         <item>EXAMPLE2:gps</item>

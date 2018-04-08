@@ -13,7 +13,9 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
+import com.google.android.gms.maps.model.LatLng;
 import java.util.List;
 
 public class GatherActivity extends Activity {
@@ -56,7 +58,7 @@ public class GatherActivity extends Activity {
         LocationManager locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
         List<String> providers = locationManager.getProviders(false);
         //Log the list of providers
-        for (String provider:providers){
+        for (String provider : providers) {
             Log.d(getClass().getSimpleName(), "AVAILABLE PROVIDER: " + provider);
         }
         //Show the list of providers on the spinner
@@ -65,7 +67,7 @@ public class GatherActivity extends Activity {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.list_item, providers);
         spinner.setAdapter(adapter);
         //Check if gps is available as provider. In that case, select it as default value of the spinner
-        if (providers.contains("gps") == true){
+        if (providers.contains("gps") == true) {
             spinner.setSelection(providers.indexOf("gps"));
         }
         //Associate a listener of the class SpinnerProviderItemSelectedListener to the spinner
@@ -78,7 +80,7 @@ public class GatherActivity extends Activity {
 
     //When the app is destroyed, we want to stop retrieving information from the gps.
     @Override
-    protected void onDestroy(){
+    protected void onDestroy() {
         super.onDestroy();
         LocationManager locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
         locationManager.removeUpdates(locationListener);
@@ -102,7 +104,7 @@ public class GatherActivity extends Activity {
             String provider = (String) spinner.getSelectedItem();
             locationManager.requestLocationUpdates(provider, MIN_TIME, MIN_DISTANCE, locationListener);
             Log.d(getClass().getSimpleName(), "Lokalisierung gestartet");
-        }else{
+        } else {
             locationManager.removeUpdates(locationListener);
             Log.d(getClass().getSimpleName(), "Lokalisierung beendet");
         }
@@ -112,11 +114,11 @@ public class GatherActivity extends Activity {
     //and let us create listeners that can be associated to spinners on our activity, to notice when
     //an item of the spinner has been selected.
     @SuppressLint("MissingPermission")
-    class SpinnerProviderItemSelectedListener implements AdapterView.OnItemSelectedListener{
+    class SpinnerProviderItemSelectedListener implements AdapterView.OnItemSelectedListener {
         @Override
         //When an item of the is selected, we need to stop the flow of gps data and set it again with the new provider
-        public void onItemSelected(AdapterView<?> parent, View view, int pos, long id){
-            if(((ToggleButton) GatherActivity.this.findViewById(R.id.toggle_start)).isChecked()){
+        public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+            if (((ToggleButton) GatherActivity.this.findViewById(R.id.toggle_start)).isChecked()) {
                 LocationManager locationManager = (LocationManager) GatherActivity.this.getSystemService(LOCATION_SERVICE);
                 locationManager.removeUpdates(locationListener);
                 String provider = ((TextView) view).getText().toString();
@@ -126,6 +128,7 @@ public class GatherActivity extends Activity {
                 Log.i(getClass().getSimpleName(), showProperties(locationManager, provider));
             }
         }
+
         @Override
         public void onNothingSelected(AdapterView<?> adapterView) {
             Log.i(getClass().getSimpleName(), "No item of the spinner was selected");
@@ -133,17 +136,27 @@ public class GatherActivity extends Activity {
     }
 
     //This method returns information about the selected gps-provider
-    String showProperties (LocationManager locationManager, String provider){
-        String accuracy = (locationManager.getProvider(provider).getAccuracy() == 1) ? "FINE":"COARSE";
+    String showProperties(LocationManager locationManager, String provider) {
+        String accuracy = (locationManager.getProvider(provider).getAccuracy() == 1) ? "FINE" : "COARSE";
         return ("provider: " + provider + "\n" +
                 "horizontale Genauigkeit: " + accuracy + "\n" +
                 "unterstützt Höhenermittlung: " + (locationManager.getProvider(provider).supportsAltitude()) + "\n" +
                 "erfordert Satellit: " + (locationManager.getProvider(provider).requiresSatellite()));
     }
 
-    //This method starts a new intent pointing to the NoteMapActivity
-    public void onButtonShowPositionClick (View view){
-        Intent intent = new Intent(this, NoteMapActivity.class);
-        startActivity(intent);
+    //This method starts a new intent pointing to the NoteMapActivity, passing in the intent
+    //the actual position as a LatLang object
+    public void onButtonShowPositionClick(View view) {
+        Spinner spinner = (Spinner) findViewById(R.id.spinnerProviders);
+        String provider = (String) spinner.getSelectedItem();
+        LocationManager locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
+        @SuppressLint("MissingPermission") Location lastLocation = locationManager.getLastKnownLocation(provider);
+        if(lastLocation != null){
+            Intent intent = new Intent(this, NoteMapActivity.class);
+            intent.putExtra("location", new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude()));
+            startActivity(intent);
+        }else{
+            Toast.makeText(this, R.string.no_actual_position, Toast.LENGTH_SHORT).show();
+        }
     }
 }
