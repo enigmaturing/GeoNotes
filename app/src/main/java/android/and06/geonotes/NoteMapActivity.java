@@ -2,6 +2,7 @@ package android.and06.geonotes;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -13,7 +14,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 public class NoteMapActivity extends Activity implements OnMapReadyCallback {
-
     // onCreate just shows the mapview as defined by activity_note_map.xml
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,18 +27,23 @@ public class NoteMapActivity extends Activity implements OnMapReadyCallback {
         //Test the method decimalToSexagesimal:
         System.out.println(decimalToSexagesimal(52.514366, 13.350141));
     }
-    //TODO 08.04.2018 - onMapReady must accept the GPS-Position contained in the intent created by GatherActivity
+    //onMapReady evaluates the GPS-Position contained in the intent created by GatherActivity and shows
+    //it on the map as a marker
     @Override
     public void onMapReady(GoogleMap googleMap) {
         Bundle extras = getIntent().getExtras();
-        //Show a marker on the map:
-        LatLng markerPosition = new LatLng(37.422006,-122.084095);
-        MarkerOptions options = new MarkerOptions().position(markerPosition).title("Mein Standort").snippet("Dies ist ein Infotext");
-        googleMap.addMarker(options);
-        //Center the map on the marker and set the zoom-level to 10.0f
-        CameraPosition cameraPosition = CameraPosition.fromLatLngZoom(markerPosition, 10.0f);
-        CameraUpdate update = CameraUpdateFactory.newCameraPosition(cameraPosition);
-        googleMap.moveCamera(update);
+        if (extras != null){
+            //Get the actual position form the intent and set it as a marker on the map
+            LatLng position = (LatLng) extras.getParcelable("location");
+            MarkerOptions options = new MarkerOptions().position(position).title("Mein Standort").snippet("Dies ist ein Infotext");
+            googleMap.addMarker(options);
+            //Center the map on the marker and set the zoom-level to 10.0f
+            CameraPosition cameraPosition = CameraPosition.fromLatLngZoom(position, 10.0f);
+            CameraUpdate update = CameraUpdateFactory.newCameraPosition(cameraPosition);
+            googleMap.moveCamera(update);
+        }else{
+            Toast.makeText(this, R.string.no_actual_position, Toast.LENGTH_SHORT).show();
+        }
     }
     @Override
     protected void onResume() {

@@ -74,8 +74,7 @@ public class GatherActivity extends Activity {
         //in order to be able to get the moment when a item of the spinner is selected
         spinner.setOnItemSelectedListener(new SpinnerProviderItemSelectedListener());
         //Show information of this provider
-        Log.i(getClass().getSimpleName(),
-                showProperties(locationManager, (spinner.getSelectedItem().toString())));
+        Log.i(getClass().getSimpleName(), showProperties(locationManager, (spinner.getSelectedItem().toString())));
     }
 
     //When the app is destroyed, we want to stop retrieving information from the gps.
