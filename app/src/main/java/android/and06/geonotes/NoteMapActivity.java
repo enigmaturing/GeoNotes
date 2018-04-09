@@ -43,8 +43,17 @@ public class NoteMapActivity extends Activity implements OnMapReadyCallback {
                     .anchor(0.5f,0.5f)
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.crosshair));
             googleMap.addMarker(options);
-            //Center the map on the marker and set the zoom-level to 10.0f
-            CameraPosition cameraPosition = CameraPosition.fromLatLngZoom(position, 10.0f);
+            // Initialize a CameraPosition object in order to be able to show the map. This can
+            // be done in two ways:
+            // 1st: Specifying position, zoom, tilt and bearing. In that case we use the constructor
+            //      of the class CameraPosition:
+            CameraPosition cameraPosition = new CameraPosition(position, 10.0f, 0.0f,0.0f);
+            // 2nd: Using the factory method fromLatLngZoom() of the class CameraPosition.Builder.
+            // In that case there is no use of a constructor (it is a factory method that
+            // automatically returns an object of the class CamerPosition). In this case it is only
+            // possible to specify position and zoom (this second way is commented. Uncomment it
+            // and comment the first way to go that way.
+            //CameraPosition cameraPosition = CameraPosition.fromLatLngZoom(position, 10.0f);
             CameraUpdate update = CameraUpdateFactory.newCameraPosition(cameraPosition);
             googleMap.moveCamera(update);
         }else{
