@@ -9,6 +9,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -35,7 +36,11 @@ public class NoteMapActivity extends Activity implements OnMapReadyCallback {
         if (extras != null){
             //Get the actual position form the intent and set it as a marker on the map
             LatLng position = (LatLng) extras.getParcelable("location");
-            MarkerOptions options = new MarkerOptions().position(position).title("Mein Standort").snippet("Dies ist ein Infotext");
+            MarkerOptions options = new MarkerOptions()
+                    .position(position)
+                    .title("Mein Standort")
+                    .snippet("Dies ist ein Infotext")
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.crosshair));
             googleMap.addMarker(options);
             //Center the map on the marker and set the zoom-level to 10.0f
             CameraPosition cameraPosition = CameraPosition.fromLatLngZoom(position, 10.0f);
