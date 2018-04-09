@@ -30,7 +30,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/actual_prject"
+        android:id="@+id/actual_project"
         android:text="@string/actual_project"/>
     <TextView
         android:layout_width="match_parent"

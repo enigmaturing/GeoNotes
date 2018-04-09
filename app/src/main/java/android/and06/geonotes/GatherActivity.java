@@ -75,6 +75,9 @@ public class GatherActivity extends Activity {
         spinner.setOnItemSelectedListener(new SpinnerProviderItemSelectedListener());
         //Show information of this provider
         Log.i(getClass().getSimpleName(), showProperties(locationManager, (spinner.getSelectedItem().toString())));
+        //Show project name on the textview with id actual_project
+        TextView actualProjectTextView = (TextView) findViewById(R.id.actual_project);
+        actualProjectTextView.setText(getString(R.string.actual_project) + new java.util.Date().toString());
     }
 
     //When the app is destroyed, we want to stop retrieving information from the gps.
