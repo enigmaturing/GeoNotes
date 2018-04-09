@@ -36,10 +36,12 @@ public class NoteMapActivity extends Activity implements OnMapReadyCallback {
         if (extras != null){
             //Get the actual position form the intent and set it as a marker on the map
             LatLng position = (LatLng) extras.getParcelable("location");
+            String title = extras.getString("subject");
+            String snippet = extras.getString("note");
             MarkerOptions options = new MarkerOptions()
                     .position(position)
-                    .title("Mein Standort")
-                    .snippet("Dies ist ein Infotext")
+                    .title(title)
+                    .snippet(snippet)
                     .anchor(0.5f,0.5f)
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.crosshair));
             googleMap.addMarker(options);

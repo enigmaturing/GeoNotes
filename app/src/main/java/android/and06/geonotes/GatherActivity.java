@@ -154,8 +154,11 @@ public class GatherActivity extends Activity {
         LocationManager locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
         @SuppressLint("MissingPermission") Location lastLocation = locationManager.getLastKnownLocation(provider);
         if(lastLocation != null){
+            //Define an intent and pass the following data: position, subject and note.
             Intent intent = new Intent(this, NoteMapActivity.class);
             intent.putExtra("location", new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude()));
+            intent.putExtra("subject", (((TextView)findViewById(R.id.subject)).getText().toString()));
+            intent.putExtra("note", (((TextView)findViewById(R.id.note)).getText()).toString());
             startActivity(intent);
         }else{
             Toast.makeText(this, R.string.no_actual_position, Toast.LENGTH_SHORT).show();
