@@ -6,6 +6,10 @@
     <string name="button_standort">STANDORT ANZEIGEN</string>
     <string name="title_geodaten_empfangen">Geodaten empfangen:</string>
     <string name="no_actual_position">unbekannter Standort</string>
+    <string name="actual_project">Aktuelles Project: </string>
+    <string name="subject_title">Thema</string>
+    <string name="note_title">Notiz</string>
+    <string name="button_save_title">NOTIZ SPEICHERN</string>
     <string-array name="spinner_provider">
         <item>EXAMPLE1:passive</item>
         <item>EXAMPLE2:gps</item>

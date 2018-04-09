@@ -22,11 +22,42 @@
         android:textOff="@string/button_lokalisierung_off"
         android:textOn="@string/button_lokalisierung_on"
         android:onClick="onToggleButtonClick"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1.5dp"
+        android:background="#000"
+        android:layout_margin="4dp" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/actual_prject"
+        android:text="@string/actual_project"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/subject_title"/>
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/subject"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/note_title"/>
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/note"/>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/button_save_title"/>
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="onButtonShowPositionClick"
         android:text="@string/button_standort"/>
+    <!--
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -35,4 +66,5 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/textview_output"/>
+    -->
 </LinearLayout>

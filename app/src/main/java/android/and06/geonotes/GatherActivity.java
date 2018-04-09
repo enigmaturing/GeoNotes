@@ -31,8 +31,8 @@ public class GatherActivity extends Activity {
         // (Permisos de aplicaciones) -> Y alli activar ubicacion para esta applicacion
         @Override
         public void onLocationChanged(Location location) {
-            TextView textView = (TextView) GatherActivity.this.findViewById(R.id.textview_output);
-            textView.setText(textView.getText().toString() + "\n" + location.toString());
+            //TextView textView = (TextView) GatherActivity.this.findViewById(R.id.textview_output);
+            //textView.setText(textView.getText().toString() + "\n" + location.toString());
             Log.d(GatherActivity.this.getClass().getSimpleName(), "Empfangene Geodaten:\n" + location.toString());
         }
 
