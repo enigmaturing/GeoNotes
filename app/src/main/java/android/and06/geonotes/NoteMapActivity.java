@@ -40,6 +40,7 @@ public class NoteMapActivity extends Activity implements OnMapReadyCallback {
                     .position(position)
                     .title("Mein Standort")
                     .snippet("Dies ist ein Infotext")
+                    .anchor(0.5f,0.5f)
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.crosshair));
             googleMap.addMarker(options);
             //Center the map on the marker and set the zoom-level to 10.0f
