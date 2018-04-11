@@ -2,6 +2,9 @@ package android.and06.geonotes;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -12,6 +15,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 public class NoteMapActivity extends Activity implements OnMapReadyCallback {
@@ -58,6 +62,9 @@ public class NoteMapActivity extends Activity implements OnMapReadyCallback {
             //CameraPosition cameraPosition = CameraPosition.fromLatLngZoom(position, 10.0f);
             CameraUpdate update = CameraUpdateFactory.newCameraPosition(cameraPosition);
             googleMap.moveCamera(update);
+            //Set the marker on the googleMap with the layout inflated in
+            // the innner-class MarkerInfoWindow (AND06 S.64)
+            googleMap.setInfoWindowAdapter(new MarkerInfoWindow());
         }else{
             Toast.makeText(this, R.string.no_actual_position, Toast.LENGTH_SHORT).show();
         }
@@ -108,6 +115,26 @@ public class NoteMapActivity extends Activity implements OnMapReadyCallback {
                 String.format("%.3f", secondsLongitude) + "''" + NOSWlongitude + " / " +
                 degreesLatitude + "° " + minutesLatitude + "' " +
                 String.format("%.3f", secondsLatitude) + "''" + NOSWlatitude;
+    }
+
+    //This inner class implements the interface GoogleMap.InfoWindowAdapter in order for us to inflate
+    //te popup_window_layout.xml and be able to set this layout for the marker on the map and get a two lines
+    //disposition for the marker (AND06 S.63)
+    class MarkerInfoWindow implements GoogleMap.InfoWindowAdapter{
+        @Override
+        public View getInfoWindow(Marker marker) {
+            LayoutInflater inflater = NoteMapActivity.this.getLayoutInflater();
+            View popupWindow = inflater.inflate(R.layout.popup_window_layout,null);
+            TextView title = (TextView) popupWindow.findViewById(R.id.textview_popup_title);
+            title.setText(marker.getTitle());
+            TextView snippet = (TextView) popupWindow.findViewById(R.id.textview_popup_snippet);
+            snippet.setText(marker.getSnippet());
+            return popupWindow;
+        }
+        @Override
+        public View getInfoContents(Marker marker) {
+            return null;
+        }
     }
 
 }
