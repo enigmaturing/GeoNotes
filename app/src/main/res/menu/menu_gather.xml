@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--This xml defines the items on the menu of the activity GatherActivity of this app-->
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/action_settings"
+        android:title="@string/action_settings"
+        android:orderInCategory="100"
+        app:showAsAction="never">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item android:title="@string/title_item_foot"
+                    android:id="@+id/item_foot"/>
+                <item android:title="@string/title_item_bicycle"
+                    android:id="@+id/item_bicycle"
+                    android:checked="true"/>
+                <item android:title="@string/title_item_car"
+                    android:id="@+id/item_car"/>
+                <item android:title="@string/title_item_car_fast"
+                    android:id="@+id/item_car_fast"/>
+            </group>
+        </menu>
+    </item>
+</menu>

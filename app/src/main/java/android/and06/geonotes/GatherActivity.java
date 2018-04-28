@@ -8,6 +8,8 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -20,8 +22,8 @@ import java.util.List;
 
 public class GatherActivity extends Activity {
 
-    private final static int MIN_TIME = 5000; //Minimum time between two sets of gps-positions (in ms)
-    private final static int MIN_DISTANCE = 5; //Minimum distance between two sets of gps-positions (in m)
+    private int minTime = 5000; //Minimum time between two sets of gps-positions (in ms)
+    private int minDistance = 5; //Minimum distance between two sets of gps-positions (in m)
     private final NoteLocationListener locationListener = new NoteLocationListener();
 
     class NoteLocationListener implements LocationListener {
@@ -80,6 +82,67 @@ public class GatherActivity extends Activity {
         actualProjectTextView.setText(getString(R.string.actual_project) + new java.util.Date().toString());
     }
 
+    // The method onCreateOptionsMenu(Menu menu) inflates the menu to select rad, pkw or pkw-fern.
+    // It adds items to the action bar, like they were defined on the layout menu_gather.xml
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        getMenuInflater().inflate(R.menu.menu_gather, menu);
+        return true;
+    }
+
+    // The mehtod onOptionsItemSelected(MenuItem item) defines what to do when pressing an item
+    // of the menu of this activity (GatherActivity). The layout of that menu was defined in
+    // the menu_gather.xml
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        int id = item.getItemId();
+        switch (id){
+            case R.id.item_foot:
+                // ATTENTION!! The method onOptionsItemSelected DOES NOT sets a mark on the selected
+                // radiobutton. We have to do it manually with the method setChecked(true);
+                item.setChecked(true);
+                minTime = 9000;
+                minDistance = 10;
+                Toast.makeText(this, "Neues GPS-Intervall ausgewählt. Bitte Lokalisierung neu starten.", Toast.LENGTH_LONG).show();
+                break;
+            case R.id.item_bicycle:
+                // ATTENTION!! The method onOptionsItemSelected DOES NOT sets a mark on the selected
+                // radiobutton. We have to do it manually with the method setChecked(true);
+                item.setChecked(true);
+                minTime = 4000;
+                minDistance = 25;
+                Toast.makeText(this, "Neues GPS-Intervall ausgewählt. Bitte Lokalisierung neu starten.", Toast.LENGTH_LONG).show();
+                break;
+            case R.id.item_car:
+                // ATTENTION!! The method onOptionsItemSelected DOES NOT sets a mark on the selected
+                // radiobutton. We have to do it manually with the method setChecked(true);
+                item.setChecked(true);
+                minTime = 4000;
+                minDistance = 50;
+                Toast.makeText(this, "Neues GPS-Intervall ausgewählt. Bitte Lokalisierung neu starten.", Toast.LENGTH_LONG).show();
+                break;
+            case R.id.item_car_fast:
+                // ATTENTION!! The method onOptionsItemSelected DOES NOT sets a mark on the selected
+                // radiobutton. We have to do it manually with the method setChecked(true);
+                item.setChecked(true);
+                minTime = 4000;
+                minDistance = 100;
+                Toast.makeText(this, "Neues GPS-Intervall ausgewählt. Bitte Lokalisierung neu starten.", Toast.LENGTH_LONG).show();
+                break;
+            default:
+                break;
+        }
+
+
+
+        //no inspection simplifiableIfStatement
+        if (id == R.id.action_settings){
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+
     //When the app is destroyed, we want to stop retrieving information from the gps.
     @Override
     protected void onDestroy() {
@@ -104,7 +167,7 @@ public class GatherActivity extends Activity {
         if (((ToggleButton) view).isChecked()) {
             Spinner spinner = (Spinner) findViewById(R.id.spinnerProviders);
             String provider = (String) spinner.getSelectedItem();
-            locationManager.requestLocationUpdates(provider, MIN_TIME, MIN_DISTANCE, locationListener);
+            locationManager.requestLocationUpdates(provider, minTime, minDistance, locationListener);
             Log.d(getClass().getSimpleName(), "Lokalisierung gestartet");
         } else {
             locationManager.removeUpdates(locationListener);
@@ -124,7 +187,7 @@ public class GatherActivity extends Activity {
                 LocationManager locationManager = (LocationManager) GatherActivity.this.getSystemService(LOCATION_SERVICE);
                 locationManager.removeUpdates(locationListener);
                 String provider = ((TextView) view).getText().toString();
-                locationManager.requestLocationUpdates(provider, MIN_TIME, MIN_DISTANCE, locationListener);
+                locationManager.requestLocationUpdates(provider, minTime, minDistance, locationListener);
                 Log.i(getClass().getSimpleName(), "Provider changed by the user to: " + provider);
                 //Show information of the selected provider
                 Log.i(getClass().getSimpleName(), showProperties(locationManager, provider));

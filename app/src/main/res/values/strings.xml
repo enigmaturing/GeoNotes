@@ -10,6 +10,11 @@
     <string name="subject_title">Thema</string>
     <string name="note_title">Notiz</string>
     <string name="button_save_title">NOTIZ SPEICHERN</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_item_foot">Zu Fuß (9 sec/10 m)</string>
+    <string name="title_item_bicycle">Rad (4 sec/25 m)</string>
+    <string name="title_item_car">PKW (4 sec/50 m)</string>
+    <string name="title_item_car_fast">PKW fern (4 sec/100 m)</string>
     <string-array name="spinner_provider">
         <item>EXAMPLE1:passive</item>
         <item>EXAMPLE2:gps</item>
