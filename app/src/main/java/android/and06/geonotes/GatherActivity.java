@@ -18,7 +18,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 import com.google.android.gms.maps.model.LatLng;
+
+import java.text.DateFormat;
 import java.util.List;
+import java.util.Locale;
 
 public class GatherActivity extends Activity {
 
@@ -77,9 +80,13 @@ public class GatherActivity extends Activity {
         spinner.setOnItemSelectedListener(new SpinnerProviderItemSelectedListener());
         //Show information of this provider
         Log.i(getClass().getSimpleName(), showProperties(locationManager, (spinner.getSelectedItem().toString())));
+        //Initialize a DateFormat object to be able to format the date and the time to german
+        DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG,  DateFormat.MEDIUM, Locale.GERMAN);
+        //Get date a time, format it into German form and save it as String in the variable date
+        String dateAndTime = dateFormat.format(new java.util.Date());
         //Show project name on the textview with id actual_project
         TextView actualProjectTextView = (TextView) findViewById(R.id.actual_project);
-        actualProjectTextView.setText(getString(R.string.actual_project) + new java.util.Date().toString());
+        actualProjectTextView.setText(getString(R.string.actual_project) + dateAndTime);
     }
 
     // The method onCreateOptionsMenu(Menu menu) inflates the menu to select rad, pkw or pkw-fern.
