@@ -9,10 +9,10 @@
         <menu>
             <group android:checkableBehavior="single">
                 <item android:title="@string/title_item_foot"
-                    android:id="@+id/item_foot"/>
-                <item android:title="@string/title_item_bicycle"
-                    android:id="@+id/item_bicycle"
+                    android:id="@+id/item_foot"
                     android:checked="true"/>
+                <item android:title="@string/title_item_bicycle"
+                    android:id="@+id/item_bicycle" />
                 <item android:title="@string/title_item_car"
                     android:id="@+id/item_car"/>
                 <item android:title="@string/title_item_car_fast"

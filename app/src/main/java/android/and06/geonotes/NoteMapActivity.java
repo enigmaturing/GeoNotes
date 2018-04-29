@@ -53,7 +53,7 @@ public class NoteMapActivity extends Activity implements OnMapReadyCallback {
             // be done in two ways:
             // 1st: Specifying position, zoom, tilt and bearing. In that case we use the constructor
             //      of the class CameraPosition:
-            CameraPosition cameraPosition = new CameraPosition(position, 10.0f, 0.0f,0.0f);
+            CameraPosition cameraPosition = new CameraPosition(position, 18.0f, 0.0f,0.0f);
             // 2nd: Using the factory method fromLatLngZoom() of the class CameraPosition.Builder.
             // In that case there is no use of a constructor (it is a factory method that
             // automatically returns an object of the class CamerPosition). In this case it is only

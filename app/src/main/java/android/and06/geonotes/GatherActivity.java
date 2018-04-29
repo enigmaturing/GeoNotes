@@ -18,7 +18,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 import com.google.android.gms.maps.model.LatLng;
-
 import java.text.DateFormat;
 import java.util.List;
 import java.util.Locale;
@@ -27,6 +26,9 @@ public class GatherActivity extends Activity {
 
     private int minTime = 5000; //Minimum time between two sets of gps-positions (in ms)
     private int minDistance = 5; //Minimum distance between two sets of gps-positions (in m)
+    private boolean locationWasActivated = false; //Variable to keep track of the activation of the location function
+    private LocationManager locationManager;
+    private String provider;
     private final NoteLocationListener locationListener = new NoteLocationListener();
 
     class NoteLocationListener implements LocationListener {
@@ -60,7 +62,7 @@ public class GatherActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gather);
         //Get a list of strings with the available GPS-Providers, making use of an object of type LocationManager
-        LocationManager locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
+        locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
         List<String> providers = locationManager.getProviders(false);
         //Log the list of providers
         for (String provider : providers) {
@@ -149,13 +151,49 @@ public class GatherActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-
-    //When the app is destroyed, we want to stop retrieving information from the gps.
+    //When this activity is destroyed, we want to stop retrieving information from the gps, to save energy.
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        LocationManager locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
+        locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
         locationManager.removeUpdates(locationListener);
+    }
+
+    //When this activity is paused, we want to stop retrieving information from the gps, to save energy.
+    @Override
+    protected void onPause(){
+        super.onPause();
+        locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
+        locationManager.removeUpdates(locationListener);
+        if (((ToggleButton) GatherActivity.this.findViewById(R.id.toggle_start)).isChecked()) {
+            locationWasActivated = true;
+        }else{
+            locationWasActivated = false;
+        }
+    }
+
+    //When showing this activity again, check if locationWasActivated and then activate the location again
+    @SuppressLint("MissingPermission")
+    @Override
+    protected void onResume(){
+        super.onResume();
+        if (locationWasActivated == true){
+            locationManager.requestLocationUpdates(provider, minTime, minDistance, locationListener);
+            Toast.makeText(GatherActivity.this, "Die Lokalisierung wurde wieder gestartet", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    //When this activity is stopped, we want to stop retrieving information from the gps, to save energy.
+    @Override
+    protected void onStop(){
+        super.onStop();
+        locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
+        locationManager.removeUpdates(locationListener);
+        if (((ToggleButton) GatherActivity.this.findViewById(R.id.toggle_start)).isChecked()) {
+            locationWasActivated = true;
+        }else{
+            locationWasActivated = false;
+        }
     }
 
     // The method onToggleButtonClick is triggered with the toggleButton with id toggle_start (see
@@ -170,10 +208,10 @@ public class GatherActivity extends Activity {
     // Only so it is possible to instantiate a locationListener object.
     @SuppressLint("MissingPermission")
     public void onToggleButtonClick(View view) {
-        LocationManager locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
+        locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
         if (((ToggleButton) view).isChecked()) {
             Spinner spinner = (Spinner) findViewById(R.id.spinnerProviders);
-            String provider = (String) spinner.getSelectedItem();
+            provider = (String) spinner.getSelectedItem();
             locationManager.requestLocationUpdates(provider, minTime, minDistance, locationListener);
             Log.d(getClass().getSimpleName(), "Lokalisierung gestartet");
         } else {
@@ -191,7 +229,7 @@ public class GatherActivity extends Activity {
         //When an item of the is selected, we need to stop the flow of gps data and set it again with the new provider
         public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
             if (((ToggleButton) GatherActivity.this.findViewById(R.id.toggle_start)).isChecked()) {
-                LocationManager locationManager = (LocationManager) GatherActivity.this.getSystemService(LOCATION_SERVICE);
+                locationManager = (LocationManager) GatherActivity.this.getSystemService(LOCATION_SERVICE);
                 locationManager.removeUpdates(locationListener);
                 String provider = ((TextView) view).getText().toString();
                 locationManager.requestLocationUpdates(provider, minTime, minDistance, locationListener);
@@ -221,7 +259,7 @@ public class GatherActivity extends Activity {
     public void onButtonShowPositionClick(View view) {
         Spinner spinner = (Spinner) findViewById(R.id.spinnerProviders);
         String provider = (String) spinner.getSelectedItem();
-        LocationManager locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
+        locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
         @SuppressLint("MissingPermission") Location lastLocation = locationManager.getLastKnownLocation(provider);
         if(lastLocation != null){
             //Define an intent and pass the following data: position, subject and note.
