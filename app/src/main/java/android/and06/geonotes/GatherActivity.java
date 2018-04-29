@@ -69,7 +69,7 @@ public class GatherActivity extends Activity {
             Log.d(getClass().getSimpleName(), "AVAILABLE PROVIDER: " + provider);
         }
         //Show the list of providers on the spinner
-        Spinner spinner = (Spinner) findViewById(R.id.spinnerProviders);
+        Spinner spinner = findViewById(R.id.spinnerProviders);
         //Define an adapter with the array of strings "providers" and set it as the source for the spinner
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.list_item, providers);
         spinner.setAdapter(adapter);
@@ -87,7 +87,7 @@ public class GatherActivity extends Activity {
         //Get date a time, format it into German form and save it as String in the variable date
         String dateAndTime = dateFormat.format(new java.util.Date());
         //Show project name on the textview with id actual_project
-        TextView actualProjectTextView = (TextView) findViewById(R.id.actual_project);
+        TextView actualProjectTextView = findViewById(R.id.actual_project);
         actualProjectTextView.setText(getString(R.string.actual_project) + dateAndTime);
     }
 
@@ -106,6 +106,14 @@ public class GatherActivity extends Activity {
     public boolean onOptionsItemSelected(MenuItem item){
         int id = item.getItemId();
         switch (id){
+            case R.id.item_quiet:
+                // ATTENTION!! The method onOptionsItemSelected DOES NOT sets a mark on the selected
+                // radiobutton. We have to do it manually with the method setChecked(true);
+                item.setChecked(true);
+                minTime = 60000;
+                minDistance = 10;
+                Toast.makeText(this, "Neues GPS-Intervall ausgewählt. Bitte Lokalisierung neu starten.", Toast.LENGTH_LONG).show();
+                break;
             case R.id.item_foot:
                 // ATTENTION!! The method onOptionsItemSelected DOES NOT sets a mark on the selected
                 // radiobutton. We have to do it manually with the method setChecked(true);
@@ -165,11 +173,7 @@ public class GatherActivity extends Activity {
         super.onPause();
         locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
         locationManager.removeUpdates(locationListener);
-        if (((ToggleButton) GatherActivity.this.findViewById(R.id.toggle_start)).isChecked()) {
-            locationWasActivated = true;
-        }else{
-            locationWasActivated = false;
-        }
+        locationWasActivated = ((ToggleButton) GatherActivity.this.findViewById(R.id.toggle_start)).isChecked();
     }
 
     //When showing this activity again, check if locationWasActivated and then activate the location again
@@ -189,11 +193,7 @@ public class GatherActivity extends Activity {
         super.onStop();
         locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
         locationManager.removeUpdates(locationListener);
-        if (((ToggleButton) GatherActivity.this.findViewById(R.id.toggle_start)).isChecked()) {
-            locationWasActivated = true;
-        }else{
-            locationWasActivated = false;
-        }
+        locationWasActivated = ((ToggleButton) GatherActivity.this.findViewById(R.id.toggle_start)).isChecked();
     }
 
     // The method onToggleButtonClick is triggered with the toggleButton with id toggle_start (see
@@ -210,7 +210,7 @@ public class GatherActivity extends Activity {
     public void onToggleButtonClick(View view) {
         locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
         if (((ToggleButton) view).isChecked()) {
-            Spinner spinner = (Spinner) findViewById(R.id.spinnerProviders);
+            Spinner spinner = findViewById(R.id.spinnerProviders);
             provider = (String) spinner.getSelectedItem();
             locationManager.requestLocationUpdates(provider, minTime, minDistance, locationListener);
             Log.d(getClass().getSimpleName(), "Lokalisierung gestartet");
@@ -257,7 +257,7 @@ public class GatherActivity extends Activity {
     //This method starts a new intent pointing to the NoteMapActivity, passing in the intent
     //the actual position as a LatLang object
     public void onButtonShowPositionClick(View view) {
-        Spinner spinner = (Spinner) findViewById(R.id.spinnerProviders);
+        Spinner spinner = findViewById(R.id.spinnerProviders);
         String provider = (String) spinner.getSelectedItem();
         locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
         @SuppressLint("MissingPermission") Location lastLocation = locationManager.getLastKnownLocation(provider);

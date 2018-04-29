@@ -8,6 +8,8 @@
         app:showAsAction="never">
         <menu>
             <group android:checkableBehavior="single">
+                <item android:title="@string/title_item_quiet"
+                    android:id="@+id/item_quiet" />
                 <item android:title="@string/title_item_foot"
                     android:id="@+id/item_foot"
                     android:checked="true"/>
