@@ -272,4 +272,8 @@ public class GatherActivity extends Activity {
             Toast.makeText(this, R.string.no_actual_position, Toast.LENGTH_SHORT).show();
         }
     }
+
+    public void onSaveNoteButtonClick(View view){
+        Toast.makeText(this, R.string.function_not_yet_implemented, Toast.LENGTH_SHORT).show();
+    }
 }
