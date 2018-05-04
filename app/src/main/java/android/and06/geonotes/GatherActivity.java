@@ -24,9 +24,9 @@ import java.util.Locale;
 
 public class GatherActivity extends Activity {
 
+    private final int MIN_TIME_IN_BACKGROUND = 300000; //Minimum time between two sets of gps-positions (in ms) when the view is in background
     private int minTime = 5000; //Minimum time between two sets of gps-positions (in ms)
     private int minDistance = 5; //Minimum distance between two sets of gps-positions (in m)
-    private boolean locationWasActivated = false; //Variable to keep track of the activation of the location function
     private LocationManager locationManager;
     private String provider;
     private final NoteLocationListener locationListener = new NoteLocationListener();
@@ -55,7 +55,6 @@ public class GatherActivity extends Activity {
         public void onStatusChanged(String provider, int status, Bundle extras) {
         }
     }
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,7 +111,7 @@ public class GatherActivity extends Activity {
                 item.setChecked(true);
                 minTime = 60000;
                 minDistance = 10;
-                Toast.makeText(this, "Neues GPS-Intervall ausgewählt. Bitte Lokalisierung neu starten.", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Neues GPS-Intervall ausgewählt.\nBitte Lokalisierung neu starten.", Toast.LENGTH_LONG).show();
                 break;
             case R.id.item_foot:
                 // ATTENTION!! The method onOptionsItemSelected DOES NOT sets a mark on the selected
@@ -120,7 +119,7 @@ public class GatherActivity extends Activity {
                 item.setChecked(true);
                 minTime = 9000;
                 minDistance = 10;
-                Toast.makeText(this, "Neues GPS-Intervall ausgewählt. Bitte Lokalisierung neu starten.", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Neues GPS-Intervall ausgewählt.\nBitte Lokalisierung neu starten.", Toast.LENGTH_LONG).show();
                 break;
             case R.id.item_bicycle:
                 // ATTENTION!! The method onOptionsItemSelected DOES NOT sets a mark on the selected
@@ -128,7 +127,7 @@ public class GatherActivity extends Activity {
                 item.setChecked(true);
                 minTime = 4000;
                 minDistance = 25;
-                Toast.makeText(this, "Neues GPS-Intervall ausgewählt. Bitte Lokalisierung neu starten.", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Neues GPS-Intervall ausgewählt.\nBitte Lokalisierung neu starten.", Toast.LENGTH_LONG).show();
                 break;
             case R.id.item_car:
                 // ATTENTION!! The method onOptionsItemSelected DOES NOT sets a mark on the selected
@@ -136,7 +135,7 @@ public class GatherActivity extends Activity {
                 item.setChecked(true);
                 minTime = 4000;
                 minDistance = 50;
-                Toast.makeText(this, "Neues GPS-Intervall ausgewählt. Bitte Lokalisierung neu starten.", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Neues GPS-Intervall ausgewählt.\nBitte Lokalisierung neu starten.", Toast.LENGTH_LONG).show();
                 break;
             case R.id.item_car_fast:
                 // ATTENTION!! The method onOptionsItemSelected DOES NOT sets a mark on the selected
@@ -144,13 +143,11 @@ public class GatherActivity extends Activity {
                 item.setChecked(true);
                 minTime = 4000;
                 minDistance = 100;
-                Toast.makeText(this, "Neues GPS-Intervall ausgewählt. Bitte Lokalisierung neu starten.", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Neues GPS-Intervall ausgewählt.\nBitte Lokalisierung neu starten.", Toast.LENGTH_LONG).show();
                 break;
             default:
                 break;
         }
-
-
 
         //no inspection simplifiableIfStatement
         if (id == R.id.action_settings){
@@ -167,13 +164,18 @@ public class GatherActivity extends Activity {
         locationManager.removeUpdates(locationListener);
     }
 
-    //When this activity is paused, we want to stop retrieving information from the gps, to save energy.
+    //When this activity goes to background, we want to stop retrieving information from the gps, to save energy.
+    @SuppressLint("MissingPermission")
     @Override
     protected void onPause(){
         super.onPause();
-        locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
-        locationManager.removeUpdates(locationListener);
-        locationWasActivated = ((ToggleButton) GatherActivity.this.findViewById(R.id.toggle_start)).isChecked();
+        if(((ToggleButton) GatherActivity.this.findViewById(R.id.toggle_start)).isChecked() == true) {
+            locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
+            locationManager.removeUpdates(locationListener);
+            locationManager.requestLocationUpdates(provider, MIN_TIME_IN_BACKGROUND, minDistance, locationListener);
+            Toast.makeText(GatherActivity.this, "Activity gerät im Hintergrund.\n" +
+                    "Location Updates werden nun nur noch alle " + MIN_TIME_IN_BACKGROUND/1000 + "Sek. empfangen.", Toast.LENGTH_LONG).show();
+        }
     }
 
     //When showing this activity again, check if locationWasActivated and then activate the location again
@@ -181,9 +183,10 @@ public class GatherActivity extends Activity {
     @Override
     protected void onResume(){
         super.onResume();
-        if (locationWasActivated == true){
+        if(((ToggleButton) GatherActivity.this.findViewById(R.id.toggle_start)).isChecked() == true) {
             locationManager.requestLocationUpdates(provider, minTime, minDistance, locationListener);
-            Toast.makeText(GatherActivity.this, "Die Lokalisierung wurde wieder gestartet", Toast.LENGTH_LONG).show();
+            Toast.makeText(GatherActivity.this, "Die Lokalisierung wurde wieder gestartet.\n" +
+                    "Location Updates werden nun alle " + minTime/1000 + "Sek. empfangen", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -193,7 +196,7 @@ public class GatherActivity extends Activity {
         super.onStop();
         locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
         locationManager.removeUpdates(locationListener);
-        locationWasActivated = ((ToggleButton) GatherActivity.this.findViewById(R.id.toggle_start)).isChecked();
+        Toast.makeText(GatherActivity.this, "Die Lokalisierung wurde beendet.", Toast.LENGTH_LONG).show();
     }
 
     // The method onToggleButtonClick is triggered with the toggleButton with id toggle_start (see
