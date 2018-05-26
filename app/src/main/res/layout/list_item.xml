@@ -2,5 +2,6 @@
 <!-- This TextView defines what is each item in the spinner to select the source of the gps data-->
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:textSize="30dp">
 </TextView>
