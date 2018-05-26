@@ -82,7 +82,7 @@ public class GatherActivity extends Activity {
         //Show information of this provider
         Log.i(getClass().getSimpleName(), showProperties(locationManager, (spinner.getSelectedItem().toString())));
         //Initialize a DateFormat object to be able to format the date and the time to german
-        DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG,  DateFormat.MEDIUM, Locale.GERMAN);
+        DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.MEDIUM, Locale.GERMAN);
         //Get date a time, format it into German form and save it as String in the variable date
         String dateAndTime = dateFormat.format(new java.util.Date());
         //Show project name on the textview with id actual_project
@@ -93,7 +93,7 @@ public class GatherActivity extends Activity {
     // The method onCreateOptionsMenu(Menu menu) inflates the menu to select rad, pkw or pkw-fern.
     // It adds items to the action bar, like they were defined on the layout menu_gather.xml
     @Override
-    public boolean onCreateOptionsMenu(Menu menu){
+    public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_gather, menu);
         return true;
     }
@@ -102,9 +102,9 @@ public class GatherActivity extends Activity {
     // of the menu of this activity (GatherActivity). The layout of that menu was defined in
     // the menu_gather.xml
     @Override
-    public boolean onOptionsItemSelected(MenuItem item){
+    public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        switch (id){
+        switch (id) {
             case R.id.item_quiet:
                 // ATTENTION!! The method onOptionsItemSelected DOES NOT sets a mark on the selected
                 // radiobutton. We have to do it manually with the method setChecked(true);
@@ -150,7 +150,7 @@ public class GatherActivity extends Activity {
         }
 
         //no inspection simplifiableIfStatement
-        if (id == R.id.action_settings){
+        if (id == R.id.action_settings) {
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -167,32 +167,32 @@ public class GatherActivity extends Activity {
     //When this activity goes to background, we want to stop retrieving information from the gps, to save energy.
     @SuppressLint("MissingPermission")
     @Override
-    protected void onPause(){
+    protected void onPause() {
         super.onPause();
-        if(((ToggleButton) GatherActivity.this.findViewById(R.id.toggle_start)).isChecked() == true) {
+        if (((ToggleButton) GatherActivity.this.findViewById(R.id.toggle_start)).isChecked() == true) {
             locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
             locationManager.removeUpdates(locationListener);
             locationManager.requestLocationUpdates(provider, MIN_TIME_IN_BACKGROUND, minDistance, locationListener);
             Toast.makeText(GatherActivity.this, "Activity gerät im Hintergrund.\n" +
-                    "Location Updates werden nun nur noch alle " + MIN_TIME_IN_BACKGROUND/1000 + "Sek. empfangen.", Toast.LENGTH_LONG).show();
+                    "Location Updates werden nun nur noch alle " + MIN_TIME_IN_BACKGROUND / 1000 + "Sek. empfangen.", Toast.LENGTH_LONG).show();
         }
     }
 
     //When showing this activity again, check if locationWasActivated and then activate the location again
     @SuppressLint("MissingPermission")
     @Override
-    protected void onResume(){
+    protected void onResume() {
         super.onResume();
-        if(((ToggleButton) GatherActivity.this.findViewById(R.id.toggle_start)).isChecked() == true) {
+        if (((ToggleButton) GatherActivity.this.findViewById(R.id.toggle_start)).isChecked() == true) {
             locationManager.requestLocationUpdates(provider, minTime, minDistance, locationListener);
             Toast.makeText(GatherActivity.this, "Die Lokalisierung wurde wieder gestartet.\n" +
-                    "Location Updates werden nun alle " + minTime/1000 + "Sek. empfangen", Toast.LENGTH_LONG).show();
+                    "Location Updates werden nun alle " + minTime / 1000 + "Sek. empfangen", Toast.LENGTH_LONG).show();
         }
     }
 
     //When this activity is stopped, we want to stop retrieving information from the gps, to save energy.
     @Override
-    protected void onStop(){
+    protected void onStop() {
         super.onStop();
         locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
         locationManager.removeUpdates(locationListener);
@@ -213,8 +213,7 @@ public class GatherActivity extends Activity {
     public void onToggleButtonClick(View view) {
         locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
         if (((ToggleButton) view).isChecked()) {
-            Spinner spinner = findViewById(R.id.spinnerProviders);
-            provider = (String) spinner.getSelectedItem();
+            provider = getProvider();
             locationManager.requestLocationUpdates(provider, minTime, minDistance, locationListener);
             Log.d(getClass().getSimpleName(), "Lokalisierung gestartet");
         } else {
@@ -260,23 +259,28 @@ public class GatherActivity extends Activity {
     //This method starts a new intent pointing to the NoteMapActivity, passing in the intent
     //the actual position as a LatLang object
     public void onButtonShowPositionClick(View view) {
-        Spinner spinner = findViewById(R.id.spinnerProviders);
-        String provider = (String) spinner.getSelectedItem();
+        String provider = getProvider();
         locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
         @SuppressLint("MissingPermission") Location lastLocation = locationManager.getLastKnownLocation(provider);
-        if(lastLocation != null){
+        if (lastLocation != null) {
             //Define an intent and pass the following data: position, subject and note.
             Intent intent = new Intent(this, NoteMapActivity.class);
             intent.putExtra("location", new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude()));
-            intent.putExtra("subject", (((TextView)findViewById(R.id.subject)).getText().toString()));
-            intent.putExtra("note", (((TextView)findViewById(R.id.note)).getText()).toString());
+            intent.putExtra("subject", (((TextView) findViewById(R.id.subject)).getText().toString()));
+            intent.putExtra("note", (((TextView) findViewById(R.id.note)).getText()).toString());
             startActivity(intent);
-        }else{
+        } else {
             Toast.makeText(this, R.string.no_actual_position, Toast.LENGTH_SHORT).show();
         }
     }
 
-    public void onSaveNoteButtonClick(View view){
+    public void onSaveNoteButtonClick(View view) {
         Toast.makeText(this, R.string.function_not_yet_implemented, Toast.LENGTH_SHORT).show();
     }
+
+    private String getProvider() {
+        Spinner spinner = (Spinner) findViewById(R.id.spinnerProviders);
+        return(String)spinner.getSelectedItem();
+    }
+
 }
