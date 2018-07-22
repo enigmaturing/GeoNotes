@@ -29,6 +29,7 @@ public class GatherActivity extends Activity {
     private int minDistance = 5; //Minimum distance between two sets of gps-positions (in m)
     private String provider;
     private final NoteLocationListener locationListener = new NoteLocationListener();
+    private GeoNotesDatabaseHelper dbHelper = null;
 
     class NoteLocationListener implements LocationListener {
         // Do not forget to activate for this app the access to GPS Position on the mobile phone,
@@ -87,6 +88,8 @@ public class GatherActivity extends Activity {
         //Show project name on the textview with id actual_project
         TextView actualProjectTextView = findViewById(R.id.actual_project);
         actualProjectTextView.setText(getString(R.string.actual_project) + dateAndTime);
+        //Initialize the instance of the class GeoNotesDatabesHelper that we have declared as private field above
+        if (dbHelper == null) dbHelper = new GeoNotesDatabaseHelper(this);
     }
 
     // The method onCreateOptionsMenu(Menu menu) inflates the menu to select rad, pkw or pkw-fern.
