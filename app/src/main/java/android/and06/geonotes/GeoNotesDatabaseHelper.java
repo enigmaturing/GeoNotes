@@ -28,7 +28,7 @@ public class GeoNotesDatabaseHelper extends SQLiteOpenHelper {
             "longitude REAL NOT NULL," +
             "subject TEXT NOT NULL," +
             "note TEXT NOT NULL,                                                                                                                              data BLOB," +
-            "CONSTRAINT ProjectFK FOREIGN KEY(project) REFERENCES Projects(id) ON DELETE RESTRICT ON UPDATE CASCADE" +
+            "CONSTRAINT ProjectFK FOREIGN KEY(project) REFERENCES Projects(id) ON DELETE RESTRICT ON UPDATE CASCADE, " +
             "CONSTRAINT LocationFK FOREIGN KEY(latitude, longitude) REFERENCES Locations(latitude, longitude)" +
             ");";
 
