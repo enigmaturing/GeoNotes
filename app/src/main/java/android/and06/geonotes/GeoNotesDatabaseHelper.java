@@ -5,6 +5,8 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import java.text.DateFormat;
+import java.util.Date;
 
 public class GeoNotesDatabaseHelper extends SQLiteOpenHelper {
 
@@ -14,23 +16,24 @@ public class GeoNotesDatabaseHelper extends SQLiteOpenHelper {
     // SQL Commands are defined as static final Strings:
     private final String CREATE_PROJECTS = "CREATE TABLE IF NOT EXISTS Projects(" +
             "id INTEGER PRIMARY KEY NOT NULL, description TEXT);";
+
     private final String CREATE_LOCATIONS = "CREATE TABLE IF NOT EXISTS Locations(" +
-            "latitude REAL NOT NULL," +
-            "longitude REAL NOT NULL," +
-            "altitude INTEGER NOT NULL," +
-            "provider TEXT NOT NULL," +
-            "FOREIGN KEY(latitude, longtiude)" +
-            ");";
+            "latitude REAL NOT NULL, " +
+            "longitude REAL NOT NULL, " +
+            "altitude INTEGER NOT NULL, " +
+            "provider TEXT NOT NULL, " +
+            "PRIMARY KEY(latitude, longtiude));";
+
     private final String CREATE_NOTES = "CREATE TABLE IF NOT EXISTS Notes(" +
-            "id INTEGER PRIMARY KEY NOT NULL," +
-            "project INTEGER NOT NULL," +
-            "latitude REAL NOT NULL," +
-            "longitude REAL NOT NULL," +
-            "subject TEXT NOT NULL," +
-            "note TEXT NOT NULL,                                                                                                                              data BLOB," +
-            "CONSTRAINT ProjectFK FOREIGN KEY(project) REFERENCES Projects(id) ON DELETE RESTRICT ON UPDATE CASCADE, " +
-            "CONSTRAINT LocationFK FOREIGN KEY(latitude, longitude) REFERENCES Locations(latitude, longitude)" +
-            ");";
+            "id INTEGER PRIMARY KEY NOT NULL, " +
+            "project INTEGER NOT NULL, " +
+            "latitude REAL NOT NULL, " +
+            "longitude REAL NOT NULL, " +
+            "subject TEXT NOT NULL, " +
+            "note TEXT NOT NULL, " +
+            "data BLOB, " +
+            "CONSTRAINT ProjectFK FOREIGN KEY(project) REFERENCES Projects(id) ON DELETE RESTRICT, " +
+            "CONSTRAINT LocationFK FOREIGN KEY(latitude, longitude) REFERENCES Locations(latitude, longitude));";
 
     public GeoNotesDatabaseHelper(Context context){
         super(context, DB_NAME, null, DB_VERSION);
@@ -52,5 +55,65 @@ public class GeoNotesDatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
 
+    }
+
+    //inner class for the table "Projects" according to the Object-relationales Mapping (AND07D S.20)
+    public static class Project{
+        public final long id; //this field can be public, since it can not be edited because it is a constant (final)
+        private String description;
+
+        public Project(long id, String description){
+            this.id = id;
+            this.description = description;
+        }
+
+        public Project(){
+            this(new Date().getTime(), "");
+        }
+
+        @Override
+        public String toString(){
+            return DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.SHORT).format(new Date(id));
+        }
+    }
+
+    //inner class for the table "Locations" according to the Object-relationales Mapping (AND07D S.23 Auf.2.4.)
+    public static class Location{
+        public final double latitude;
+        public final double longitude;
+        public final int altitude;
+        public final String provider;
+
+        public Location(double latitude, double longitude, int altitude, String provider){
+            this.latitude = latitude;
+            this.longitude = longitude;
+            this.altitude = altitude;
+            this.provider = provider;
+        }
+    }
+
+    //inner class for the table "Notes" according to the Object-relationales Mapping (AND07D S.23 Auf.2.5.)
+    public static class Note{
+        public final long id;
+        public final String project;
+        public final double latitude;
+        public final double longitude;
+        public String subject;
+        public String note;
+        public byte[] data;
+
+        public Note(long id, String project, double latitude, double longitude, String subject, String note, byte[] data){
+            this.id = id;
+            this.project = project;
+            this.latitude = latitude;
+            this.longitude = longitude;
+            this.subject = subject;
+            this.note = note;
+            this.data = data;
+        }
+
+        public Note(String project, double latitude, double longitude, String subject, String note){
+            this(new Date().getTime(), project, latitude, longitude, subject, note, null);
+        }
     }
 }

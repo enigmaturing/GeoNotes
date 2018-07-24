@@ -30,31 +30,7 @@ public class GatherActivity extends Activity {
     private String provider;
     private final NoteLocationListener locationListener = new NoteLocationListener();
     private GeoNotesDatabaseHelper dbHelper = null;
-
-    class NoteLocationListener implements LocationListener {
-        // Do not forget to activate for this app the access to GPS Position on the mobile phone,
-        // after installing it in emulator or the real device. In order to do that, install the app
-        // and then go to Settings (Ajustes) -> Permissions (Permisos) -> Permissions for apps
-        // (Permisos de aplicaciones) -> Y alli activar ubicacion para esta applicacion
-        @Override
-        public void onLocationChanged(Location location) {
-            //TextView textView = (TextView) GatherActivity.this.findViewById(R.id.textview_output);
-            //textView.setText(textView.getText().toString() + "\n" + location.toString());
-            Log.d(GatherActivity.this.getClass().getSimpleName(), "Empfangene Geodaten:\n" + location.toString());
-        }
-
-        @Override
-        public void onProviderEnabled(String provider) {
-        }
-
-        @Override
-        public void onProviderDisabled(String provider) {
-        }
-
-        @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {
-        }
-    }
+    private  GeoNotesDatabaseHelper.Project currentProject;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,15 +57,12 @@ public class GatherActivity extends Activity {
         spinner.setOnItemSelectedListener(new SpinnerProviderItemSelectedListener());
         //Show information of this provider
         Log.i(getClass().getSimpleName(), showProperties(locationManager, (spinner.getSelectedItem().toString())));
-        //Initialize a DateFormat object to be able to format the date and the time to german
-        DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.MEDIUM, Locale.GERMAN);
-        //Get date a time, format it into German form and save it as String in the variable date
-        String dateAndTime = dateFormat.format(new java.util.Date());
-        //Show project name on the textview with id actual_project
-        TextView actualProjectTextView = findViewById(R.id.actual_project);
-        actualProjectTextView.setText(getString(R.string.actual_project) + dateAndTime);
-        //Initialize the instance of the class GeoNotesDatabesHelper that we have declared as private field above
+        //Initialize the instance of the class GeoNotesDatabaseHelper that we have declared as private field above
         if (dbHelper == null) dbHelper = new GeoNotesDatabaseHelper(this);
+        //Initialize the project name when starting the app with the actual date and time
+        currentProject = new GeoNotesDatabaseHelper.Project();
+        //Show project name on the textview with id actual_project (this is done thanks to the object currentProject of the inner class GenoTesDatabaseHelper.Project)
+        ((TextView) findViewById(R.id.actual_project)).setText(getString(R.string.actual_project) + currentProject.toString());
     }
 
     // The method onCreateOptionsMenu(Menu menu) inflates the menu to select rad, pkw or pkw-fern.
@@ -290,4 +263,28 @@ public class GatherActivity extends Activity {
         locationManager.removeUpdates(locationListener);
     }
 
+    class NoteLocationListener implements LocationListener {
+        // Do not forget to activate for this app the access to GPS Position on the mobile phone,
+        // after installing it in emulator or the real device. In order to do that, install the app
+        // and then go to Settings (Ajustes) -> Permissions (Permisos) -> Permissions for apps
+        // (Permisos de aplicaciones) -> Y alli activar ubicacion para esta applicacion
+        @Override
+        public void onLocationChanged(Location location) {
+            //TextView textView = (TextView) GatherActivity.this.findViewById(R.id.textview_output);
+            //textView.setText(textView.getText().toString() + "\n" + location.toString());
+            Log.d(GatherActivity.this.getClass().getSimpleName(), "Empfangene Geodaten:\n" + location.toString());
+        }
+
+        @Override
+        public void onProviderEnabled(String provider) {
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+        }
+    }
 }
