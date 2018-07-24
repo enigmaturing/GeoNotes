@@ -228,8 +228,7 @@ public class GatherActivity extends Activity {
     //This method starts a new intent pointing to the NoteMapActivity, passing in the intent
     //the actual position as a LatLang object
     public void onButtonShowPositionClick(View view) {
-        LocationManager locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
-        @SuppressLint("MissingPermission") Location lastLocation = locationManager.getLastKnownLocation(getProvider());
+        Location lastLocation = getLastKnownLocation();
         if (lastLocation != null) {
             //Define an intent and pass the following data: position, subject and note.
             Intent intent = new Intent(this, NoteMapActivity.class);
@@ -240,6 +239,13 @@ public class GatherActivity extends Activity {
         } else {
             Toast.makeText(this, R.string.no_actual_position, Toast.LENGTH_SHORT).show();
         }
+    }
+
+    @SuppressLint("MissingPermission")
+    private Location getLastKnownLocation(){
+        String provider = getProvider();
+        LocationManager locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
+        return locationManager.getLastKnownLocation(provider);
     }
 
     public void onSaveNoteButtonClick(View view) {
