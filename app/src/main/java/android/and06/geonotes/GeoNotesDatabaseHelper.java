@@ -1,5 +1,6 @@
 package android.and06.geonotes;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -75,6 +76,14 @@ public class GeoNotesDatabaseHelper extends SQLiteOpenHelper {
         public String toString(){
             return DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.SHORT).format(new Date(id));
         }
+
+        //this method returns the values contained in an object of the class Project, in form of a ContentValue
+        public ContentValues getContentValues(){
+            ContentValues values = new ContentValues(2);
+            values.put("id", id);
+            values.put("description", description);
+            return values;
+        }
     }
 
     //inner class for the table "Locations" according to the Object-relationales Mapping (AND07D S.23 Auf.2.4.)
@@ -89,6 +98,16 @@ public class GeoNotesDatabaseHelper extends SQLiteOpenHelper {
             this.longitude = longitude;
             this.altitude = altitude;
             this.provider = provider;
+        }
+
+        //this method returns the values contained in an object of the class Location, in form of a ContentValue
+        public ContentValues getContentValues(){
+            ContentValues values = new ContentValues(4);
+            values.put("latitude", latitude);
+            values.put("longitude", longitude);
+            values.put("altitude", altitude);
+            values.put("provider", provider);
+            return values;
         }
     }
 
@@ -115,5 +134,20 @@ public class GeoNotesDatabaseHelper extends SQLiteOpenHelper {
         public Note(String project, double latitude, double longitude, String subject, String note){
             this(new Date().getTime(), project, latitude, longitude, subject, note, null);
         }
+
+        //this method returns the values contained in an object of the class Note, in form of a ContentValue
+        public ContentValues getContentValues(){
+            ContentValues values = new ContentValues(7);
+            values.put("id", id);
+            values.put("project", project);
+            values.put("latitude", latitude);
+            values.put("longitude", longitude);
+            values.put("subject", subject);
+            values.put("note", note);
+            values.put("data", data);
+            return values;
+        }
     }
+
+
 }
