@@ -35,6 +35,7 @@ public class GatherActivity extends Activity {
     private final NoteLocationListener locationListener = new NoteLocationListener();
     private GeoNotesDatabaseHelper dbHelper = null;
     private  GeoNotesDatabaseHelper.Project currentProject;
+    private GeoNotesDatabaseHelper.Note currentNote = null;  //this is the Note that was taken for the last time
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
