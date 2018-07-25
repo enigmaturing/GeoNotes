@@ -7,6 +7,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.TokenWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,6 +19,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 import com.google.android.gms.maps.model.LatLng;
+
+import org.w3c.dom.Text;
+
 import java.text.DateFormat;
 import java.util.List;
 import java.util.Locale;
@@ -248,8 +252,26 @@ public class GatherActivity extends Activity {
         return locationManager.getLastKnownLocation(provider);
     }
 
+    // This method triggers when pressing the button "Notiz speichern"
     public void onSaveNoteButtonClick(View view) {
-        Toast.makeText(this, R.string.function_not_yet_implemented, Toast.LENGTH_SHORT).show();
+        //checking if subject and note are not empty strings. If empty, exit this method
+        String subject = ((TextView) findViewById(R.id.subject)).getText().toString().trim();
+        String note = ((TextView) findViewById(R.id.note)).getText().toString().trim();
+        if (subject.length() == 0 || note.length() == 0){
+            Toast.makeText(this, R.string.empty_field_not_allowed, Toast.LENGTH_LONG).show();
+            return;
+        }
+        //checking if there is an available lastKnownPosition. If any available, exit this method
+        if (getLastKnownLocation() == null){
+            Toast.makeText(this, R.string.no_knownLastPosition_available, Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        // TODO: Projekt speichern
+
+        // TODO: Location speichern
+
+        // TODO: Notiz erstellen und speichern
     }
 
     private String getProvider() {
