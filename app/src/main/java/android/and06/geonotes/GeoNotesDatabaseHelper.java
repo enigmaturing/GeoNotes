@@ -23,7 +23,7 @@ public class GeoNotesDatabaseHelper extends SQLiteOpenHelper {
             "longitude REAL NOT NULL, " +
             "altitude INTEGER NOT NULL, " +
             "provider TEXT NOT NULL, " +
-            "PRIMARY KEY(latitude, longtiude));";
+            "PRIMARY KEY(latitude, longitude));";
 
     private final String CREATE_NOTES = "CREATE TABLE IF NOT EXISTS Notes(" +
             "id INTEGER PRIMARY KEY NOT NULL, " +
@@ -149,5 +149,16 @@ public class GeoNotesDatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    //this method inserts the data providing of the method getContentValues in a given table of our DB
+    public void insert(String table, ContentValues values){
+        SQLiteDatabase db = getWritableDatabase();
+        try {
+            db.insertOrThrow(table,null, values);
+        } catch(SQLException ex){
+            Log.d(this.getClass().getSimpleName(), ex.toString());
+        }finally {
+            db.close();
+        }
+    }
 
 }

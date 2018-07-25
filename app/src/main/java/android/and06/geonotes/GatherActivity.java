@@ -267,7 +267,8 @@ public class GatherActivity extends Activity {
             return;
         }
 
-        // TODO: Projekt speichern
+        // Save project using the method insert of our GeoNotesDatabaseHelper (AND07D S.26)
+        dbHelper.insert("Projects", currentProject.getContentValues());
 
         // TODO: Location speichern
 
