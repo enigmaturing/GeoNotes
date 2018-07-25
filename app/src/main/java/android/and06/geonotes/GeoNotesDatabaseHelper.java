@@ -114,14 +114,14 @@ public class GeoNotesDatabaseHelper extends SQLiteOpenHelper {
     //inner class for the table "Notes" according to the Object-relationales Mapping (AND07D S.23 Auf.2.5.)
     public static class Note{
         public final long id;
-        public final String project;
+        public final long project;
         public final double latitude;
         public final double longitude;
         public String subject;
         public String note;
         public byte[] data;
 
-        public Note(long id, String project, double latitude, double longitude, String subject, String note, byte[] data){
+        public Note(long id, long project, double latitude, double longitude, String subject, String note, byte[] data){
             this.id = id;
             this.project = project;
             this.latitude = latitude;
@@ -131,7 +131,7 @@ public class GeoNotesDatabaseHelper extends SQLiteOpenHelper {
             this.data = data;
         }
 
-        public Note(String project, double latitude, double longitude, String subject, String note){
+        public Note(long project, double latitude, double longitude, String subject, String note){
             this(new Date().getTime(), project, latitude, longitude, subject, note, null);
         }
 
@@ -147,6 +147,16 @@ public class GeoNotesDatabaseHelper extends SQLiteOpenHelper {
             values.put("data", data);
             return values;
         }
+
+        // setter for the private field (aka. instanzvariable) subject
+        public void setSubject(String subject){
+            this.subject = subject;
+        }
+
+        // setter for the private field (aka. instanzvariable) note
+        public void setNote(String note){
+            this.note = note;
+        }
     }
 
     //this method inserts the data providing of the method getContentValues in a given table of our DB
@@ -159,6 +169,13 @@ public class GeoNotesDatabaseHelper extends SQLiteOpenHelper {
         }finally {
             db.close();
         }
+    }
+
+    //this method updates the note or the subject of a note in the db
+    public void update(String table, ContentValues values){
+        SQLiteDatabase db = getWritableDatabase();
+        db.update(table, values, "id=" + values.get("id"), null);
+        db.close();
     }
 
 }

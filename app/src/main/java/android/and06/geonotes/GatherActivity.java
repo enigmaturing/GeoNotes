@@ -36,6 +36,7 @@ public class GatherActivity extends Activity {
     private GeoNotesDatabaseHelper dbHelper = null;
     private  GeoNotesDatabaseHelper.Project currentProject;
     private GeoNotesDatabaseHelper.Note currentNote = null;  //this is the Note that was taken for the last time
+    private Location lastLocation = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -233,7 +234,7 @@ public class GatherActivity extends Activity {
     //This method starts a new intent pointing to the NoteMapActivity, passing in the intent
     //the actual position as a LatLang object
     public void onButtonShowPositionClick(View view) {
-        Location lastLocation = getLastKnownLocation();
+        lastLocation = getLastKnownLocation();
         if (lastLocation != null) {
             //Define an intent and pass the following data: position, subject and note.
             Intent intent = new Intent(this, NoteMapActivity.class);
@@ -250,7 +251,8 @@ public class GatherActivity extends Activity {
     private Location getLastKnownLocation(){
         String provider = getProvider();
         LocationManager locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
-        return locationManager.getLastKnownLocation(provider);
+        lastLocation = locationManager.getLastKnownLocation(provider);
+        return lastLocation;
     }
 
     // This method triggers when pressing the button "Notiz speichern"
@@ -263,17 +265,38 @@ public class GatherActivity extends Activity {
             return;
         }
         //checking if there is an available lastKnownPosition. If any available, exit this method
-        if (getLastKnownLocation() == null){
+        if (lastLocation == null){
             Toast.makeText(this, R.string.no_knownLastPosition_available, Toast.LENGTH_LONG).show();
             return;
         }
 
-        // Save project using the method insert of our GeoNotesDatabaseHelper (AND07D S.26)
+        //Save project using the method insert of our GeoNotesDatabaseHelper (AND07D S.26)
         dbHelper.insert("Projects", currentProject.getContentValues());
 
-        // TODO: Location speichern
-
-        // TODO: Notiz erstellen und speichern
+        //Save note. To do that, check first if there is a current note still opened and in that case, edit it
+        //instead of saving a new one
+        if (currentNote == null){
+            //There is no current note opened. Therefore, save new location and note
+            //Save new location in the db, retrieving first the location from the object of the class GeoNotesDatabaseHelper.Location
+            GeoNotesDatabaseHelper.Location location = new GeoNotesDatabaseHelper.Location(lastLocation.getLatitude(),
+                                                                                           lastLocation.getLongitude(),
+                                                                                           (int) lastLocation.getAltitude(),
+                                                                                           lastLocation.getProvider());
+            dbHelper.insert("Locations", location.getContentValues());
+            //Save note in the db, getting retrieving the note from the object of the class GeoNotesDatabaseHelper.Note
+            currentNote = new GeoNotesDatabaseHelper.Note(currentProject.id,
+                                                          lastLocation.getLatitude(),
+                                                          lastLocation.getLongitude(),
+                                                          subject,
+                                                          note);
+            dbHelper.insert("Notes", currentNote.getContentValues());
+            Log.d(getClass().getSimpleName(), "Neue Notiz mit id " + currentNote.id + " angelegt und in DB gespeichert.");
+        }else{
+            Log.d(getClass().getSimpleName(), "Notiz existiert bereits in DB, die Notiz wird aktualisiert.");
+            currentNote.setSubject(subject);
+            currentNote.setNote(note);
+            dbHelper.update("Notes", currentNote.getContentValues());
+        }
     }
 
     private String getProvider() {
