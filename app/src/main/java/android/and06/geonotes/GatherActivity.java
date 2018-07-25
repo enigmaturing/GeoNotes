@@ -2,6 +2,8 @@ package android.and06.geonotes;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
@@ -297,6 +299,29 @@ public class GatherActivity extends Activity {
             currentNote.setNote(note);
             dbHelper.update("Notes", currentNote.getContentValues());
         }
+
+        //Show an alert dialog asking if the note has to be edited
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.edit_note);
+        builder.setNegativeButton(R.string.yes, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                //In case the user pressed "yes", delete subject and note and set the current Note to null,
+                //so the user understands that the note was edited with the given text and a new one can
+                //be saved
+                ((TextView) GatherActivity.this.findViewById(R.id.subject)).setText("");
+                ((TextView) GatherActivity.this.findViewById(R.id.note)).setText("");
+                GatherActivity.this.currentNote = null;
+            }
+        });
+        builder.setPositiveButton(R.string.no, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                //In case the user pressed "no", do nothing, because the already existing note was
+                //already saved
+            }
+        });
+        builder.show();
     }
 
     private String getProvider() {

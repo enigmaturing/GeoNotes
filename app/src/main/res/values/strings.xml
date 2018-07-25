@@ -18,6 +18,9 @@
     <string name="title_item_car">PKW (4 sec/50 m)</string>
     <string name="title_item_car_fast">PKW fern (4 sec/100 m)</string>
     <string name="no_knownLastPosition_available">Noch keine Geoposition ermittelt. Bitte später nochnmal versuchen</string>
+    <string name="edit_note">Notiz weiter bearbeiten?</string>
+    <string name="yes">Ja</string>
+    <string name="no">Nein</string>
     <string-array name="spinner_provider">
         <item>EXAMPLE1:passive</item>
         <item>EXAMPLE2:gps</item>
