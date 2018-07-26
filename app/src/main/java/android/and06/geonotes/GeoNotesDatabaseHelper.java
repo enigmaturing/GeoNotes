@@ -189,10 +189,29 @@ public class GeoNotesDatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    //this method inserts the data providing of the method getContentValues in a given table of our DB
+    public void insert(Entity entity){
+        SQLiteDatabase db = getWritableDatabase();
+        try {
+            db.insertOrThrow(entity.tableName,null, entity.getContentValues());
+        } catch(SQLException ex){
+            Log.d(this.getClass().getSimpleName(), ex.toString());
+        }finally {
+            db.close();
+        }
+    }
+
     //this method updates the note or the subject of a note in the db
     public void update(String table, ContentValues values){
         SQLiteDatabase db = getWritableDatabase();
         db.update(table, values, "id=" + values.get("id"), null);
+        db.close();
+    }
+
+    //this method updates the note or the subject of a note in the db
+    public void update(Entity entity){
+        SQLiteDatabase db = getWritableDatabase();
+        db.update(entity.tableName, entity.getContentValues(), "id=" + entity.getContentValues().get("id"), null);
         db.close();
     }
 

@@ -268,27 +268,31 @@ public class GatherActivity extends Activity {
                 return;
             }
             //Projekt speichern
-            dbHelper.insert("Projects", currentProject.getContentValues());
+            //dbHelper.insert("Projects", currentProject.getContentValues());   //<- we called the insert method this way before we had the entity class Project extending the class "Entity" (see AND07D S.33 Auf.2.2)
+            dbHelper.insert(currentProject);
             //Location speichern
             GeoNotesDatabaseHelper.Location location = new GeoNotesDatabaseHelper.Location(lastLocation.getLatitude(),
                     lastLocation.getLongitude(),
                     (int) lastLocation.getAltitude(),
                     lastLocation.getProvider());
-            dbHelper.insert("Locations", location.getContentValues());
+            //dbHelper.insert("Locations", location.getContentValues());  //<- we called the insert method this way before we had the entity-class Location extending the class "Entity" (see AND07D S.33 Auf.2.2)
+            dbHelper.insert(location);
             //Notiz speichern
             currentNote = new GeoNotesDatabaseHelper.Note(currentProject.id,
                     lastLocation.getLatitude(),
                     lastLocation.getLongitude(),
                     subject,
                     note);
-            dbHelper.insert("Notes", currentNote.getContentValues());
+            //dbHelper.insert("Notes", currentNote.getContentValues());   //<- we called the insert method this way before we had the entity-class Note extending the class "Entity" (see AND07D S.33 Auf.2.2)
+            dbHelper.insert(currentNote);
             Toast.makeText(this, R.string.note_sucessfully_created, Toast.LENGTH_LONG).show();
             Log.d(getClass().getSimpleName(), "Neue notiz angelegt und in DB gespeichert.");
         }else{
             //if there is an active note, just update note and subject for the already given location of the existing note
             currentNote.setSubject(subject);
             currentNote.setNote(note);
-            dbHelper.update("Notes", currentNote.getContentValues());
+            //dbHelper.update("Notes", currentNote.getContentValues());   //<- we called the insert method this way before we had the entity-class Note extending the class "Entity" (see AND07D S.33 Auf.2.2)
+            dbHelper.update(currentNote);
             Toast.makeText(this, R.string.note_sucessfully_edited, Toast.LENGTH_LONG).show();
             Log.d(getClass().getSimpleName(), "Notiz existiert bereits in DB, die Notiz wurde aktualisiert.");
         }
