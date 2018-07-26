@@ -58,12 +58,25 @@ public class GeoNotesDatabaseHelper extends SQLiteOpenHelper {
 
     }
 
-    //inner class for the table "Projects" according to the Object-relationales Mapping (AND07D S.20)
-    public static class Project{
+    //base class for each entity for the DB
+    private static abstract class Entity{
+        public final String tableName;
+
+        Entity(String tableName){
+            this.tableName = tableName;
+        }
+
+        public abstract  ContentValues getContentValues();
+    }
+
+
+    //inner entity-class for the table "Projects", acording to the Object-relationales Mapping (AND07D S.20)
+    public static class Project extends  Entity{
         public final long id; //this field can be public, since it can not be edited because it is a constant (final)
         private String description;
 
         public Project(long id, String description){
+            super("Projects");
             this.id = id;
             this.description = description;
         }
@@ -78,6 +91,7 @@ public class GeoNotesDatabaseHelper extends SQLiteOpenHelper {
         }
 
         //this method returns the values contained in an object of the class Project, in form of a ContentValue
+        @Override
         public ContentValues getContentValues(){
             ContentValues values = new ContentValues(2);
             values.put("id", id);
@@ -87,13 +101,14 @@ public class GeoNotesDatabaseHelper extends SQLiteOpenHelper {
     }
 
     //inner class for the table "Locations" according to the Object-relationales Mapping (AND07D S.23 Auf.2.4.)
-    public static class Location{
+    public static class Location extends Entity{
         public final double latitude;
         public final double longitude;
         public final int altitude;
         public final String provider;
 
         public Location(double latitude, double longitude, int altitude, String provider){
+            super("Locations");
             this.latitude = latitude;
             this.longitude = longitude;
             this.altitude = altitude;
@@ -101,6 +116,7 @@ public class GeoNotesDatabaseHelper extends SQLiteOpenHelper {
         }
 
         //this method returns the values contained in an object of the class Location, in form of a ContentValue
+        @Override
         public ContentValues getContentValues(){
             ContentValues values = new ContentValues(4);
             values.put("latitude", latitude);
@@ -112,7 +128,7 @@ public class GeoNotesDatabaseHelper extends SQLiteOpenHelper {
     }
 
     //inner class for the table "Notes" according to the Object-relationales Mapping (AND07D S.23 Auf.2.5.)
-    public static class Note{
+    public static class Note extends Entity{
         public final long id;
         public final long project;
         public final double latitude;
@@ -122,6 +138,7 @@ public class GeoNotesDatabaseHelper extends SQLiteOpenHelper {
         public byte[] data;
 
         public Note(long id, long project, double latitude, double longitude, String subject, String note, byte[] data){
+            super("Notes");
             this.id = id;
             this.project = project;
             this.latitude = latitude;
@@ -136,6 +153,7 @@ public class GeoNotesDatabaseHelper extends SQLiteOpenHelper {
         }
 
         //this method returns the values contained in an object of the class Note, in form of a ContentValue
+        @Override
         public ContentValues getContentValues(){
             ContentValues values = new ContentValues(7);
             values.put("id", id);
