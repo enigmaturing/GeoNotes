@@ -69,32 +69,40 @@ public class GeoNotesDatabaseHelper extends SQLiteOpenHelper {
         public abstract  ContentValues getContentValues();
     }
 
+    //base class for entity-classes that have no id, like the Project class
+    private static abstract class EntityWithId extends Entity{
+        public final long id;
+
+        EntityWithId(String tableName, long id){
+            super(tableName);
+            this.id = id;
+        }
+    }
+
 
     //inner entity-class for the table "Projects", acording to the Object-relationales Mapping (AND07D S.20)
-    public static class Project extends  Entity{
-        public final long id; //this field can be public, since it can not be edited because it is a constant (final)
+    public static class Project extends  EntityWithId{
         private String description;
 
-        public Project(long id, String description){
-            super("Projects");
-            this.id = id;
+        public Project(String description, long id){
+            super("Projects", id);
             this.description = description;
         }
 
         public Project(){
-            this(new Date().getTime(), "");
+            this("", new Date().getTime());
         }
 
         @Override
         public String toString(){
-            return DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.SHORT).format(new Date(id));
+            return DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.SHORT).format(new Date(super.id));
         }
 
         //this method returns the values contained in an object of the class Project, in form of a ContentValue
         @Override
         public ContentValues getContentValues(){
             ContentValues values = new ContentValues(2);
-            values.put("id", id);
+            values.put("id", super.id);
             values.put("description", description);
             return values;
         }
@@ -128,8 +136,8 @@ public class GeoNotesDatabaseHelper extends SQLiteOpenHelper {
     }
 
     //inner class for the table "Notes" according to the Object-relationales Mapping (AND07D S.23 Auf.2.5.)
-    public static class Note extends Entity{
-        public final long id;
+    public static class Note extends EntityWithId{
+
         public final long project;
         public final double latitude;
         public final double longitude;
@@ -138,8 +146,7 @@ public class GeoNotesDatabaseHelper extends SQLiteOpenHelper {
         public byte[] data;
 
         public Note(long id, long project, double latitude, double longitude, String subject, String note, byte[] data){
-            super("Notes");
-            this.id = id;
+            super("Notes", id);
             this.project = project;
             this.latitude = latitude;
             this.longitude = longitude;
@@ -202,14 +209,16 @@ public class GeoNotesDatabaseHelper extends SQLiteOpenHelper {
     }
 
     //this method updates the note or the subject of a note in the db
-    public void update(String table, ContentValues values){
+    //this update version is declared as private in order to avoid calling it from other class with
+    //an entity object, and forcing to use the second variant of update (with EntityWitId)
+    private void update(String table, ContentValues values){
         SQLiteDatabase db = getWritableDatabase();
         db.update(table, values, "id=" + values.get("id"), null);
         db.close();
     }
 
     //this method updates the note or the subject of a note in the db
-    public void update(Entity entity){
+    public void update(EntityWithId entity){
         SQLiteDatabase db = getWritableDatabase();
         db.update(entity.tableName, entity.getContentValues(), "id=" + entity.getContentValues().get("id"), null);
         db.close();
