@@ -9,7 +9,6 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.TokenWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,19 +20,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 import com.google.android.gms.maps.model.LatLng;
-
-import org.w3c.dom.Text;
-
-import java.text.DateFormat;
 import java.util.List;
-import java.util.Locale;
+
 
 public class GatherActivity extends Activity {
 
     private final int MIN_TIME_IN_BACKGROUND = 300000; //Minimum time between two sets of gps-positions (in ms) when the view is in background
     private int minTime = 5000; //Minimum time between two sets of gps-positions (in ms)
     private int minDistance = 5; //Minimum distance between two sets of gps-positions (in m)
-    private String provider;
     private final NoteLocationListener locationListener = new NoteLocationListener();
     private GeoNotesDatabaseHelper dbHelper = null;
     private  GeoNotesDatabaseHelper.Project currentProject;
@@ -211,10 +205,9 @@ public class GatherActivity extends Activity {
             if (((ToggleButton) GatherActivity.this.findViewById(R.id.toggle_start)).isChecked()) {
                 removeLocationUpdates();
                 requestLocationUpdates();
-                Log.i(getClass().getSimpleName(), "Provider changed by the user to: " + provider);
                 //Show information of the selected provider
                 LocationManager locationManager = (LocationManager) GatherActivity.this.getSystemService(LOCATION_SERVICE);
-                Log.i(getClass().getSimpleName(), showProperties(locationManager, getProvider()));
+                Log.i(getClass().getSimpleName(), "Provider changed by the user to: " +showProperties(locationManager, getProvider()));
             }
         }
 
@@ -266,59 +259,65 @@ public class GatherActivity extends Activity {
             Toast.makeText(this, R.string.empty_field_not_allowed, Toast.LENGTH_LONG).show();
             return;
         }
-        //checking if there is an available lastKnownPosition. If any available, exit this method
-        if (lastLocation == null){
-            Toast.makeText(this, R.string.no_knownLastPosition_available, Toast.LENGTH_LONG).show();
-            return;
-        }
-
-        //Save project using the method insert of our GeoNotesDatabaseHelper (AND07D S.26)
-        dbHelper.insert("Projects", currentProject.getContentValues());
-
-        //Save note. To do that, check first if there is a current note still opened and in that case, edit it
-        //instead of saving a new one
+        //checking if there is an active note
         if (currentNote == null){
-            //There is no current note opened. Therefore, save new location and note
-            //Save new location in the db, retrieving first the location from the object of the class GeoNotesDatabaseHelper.Location
+            //if not, get the last known location and save the project, the location and the note.
+            Location lastLocation = getLastKnownLocation();
+            if (lastLocation == null) {
+                Toast.makeText(this, R.string.no_knownLastPosition_available, Toast.LENGTH_LONG).show();
+                return;
+            }
+            //Projekt speichern
+            dbHelper.insert("Projects", currentProject.getContentValues());
+            //Location speichern
             GeoNotesDatabaseHelper.Location location = new GeoNotesDatabaseHelper.Location(lastLocation.getLatitude(),
-                                                                                           lastLocation.getLongitude(),
-                                                                                           (int) lastLocation.getAltitude(),
-                                                                                           lastLocation.getProvider());
+                    lastLocation.getLongitude(),
+                    (int) lastLocation.getAltitude(),
+                    lastLocation.getProvider());
             dbHelper.insert("Locations", location.getContentValues());
-            //Save note in the db, getting retrieving the note from the object of the class GeoNotesDatabaseHelper.Note
+            //Notiz speichern
             currentNote = new GeoNotesDatabaseHelper.Note(currentProject.id,
-                                                          lastLocation.getLatitude(),
-                                                          lastLocation.getLongitude(),
-                                                          subject,
-                                                          note);
+                    lastLocation.getLatitude(),
+                    lastLocation.getLongitude(),
+                    subject,
+                    note);
             dbHelper.insert("Notes", currentNote.getContentValues());
-            Log.d(getClass().getSimpleName(), "Neue Notiz mit id " + currentNote.id + " angelegt und in DB gespeichert.");
+            Toast.makeText(this, R.string.note_sucessfully_created, Toast.LENGTH_LONG).show();
+            Log.d(getClass().getSimpleName(), "Neue notiz angelegt und in DB gespeichert.");
         }else{
-            Log.d(getClass().getSimpleName(), "Notiz existiert bereits in DB, die Notiz wird aktualisiert.");
+            //if there is an active note, just update note and subject for the already given location of the existing note
             currentNote.setSubject(subject);
             currentNote.setNote(note);
             dbHelper.update("Notes", currentNote.getContentValues());
+            Toast.makeText(this, R.string.note_sucessfully_edited, Toast.LENGTH_LONG).show();
+            Log.d(getClass().getSimpleName(), "Notiz existiert bereits in DB, die Notiz wurde aktualisiert.");
         }
-
-        //Show an alert dialog asking if the note has to be edited
+        //After having saved the note, show an alert dialog asking if the updated note has to be once more edited.
+        //Having this AlertDialog allows the user to keep on adding editions to the last notiz, as long as the user
+        //presses "yes"
+        //When the user presses "no" ,the app understands that he wants to make a new note and not edit the last
+        //one any longer
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.edit_note);
-        builder.setNegativeButton(R.string.yes, new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                //In case the user pressed "yes", delete subject and note and set the current Note to null,
-                //so the user understands that the note was edited with the given text and a new one can
-                //be saved
+                //In case the user pressed "no", delete strings subject and note and set the current Note to null,
+                //preparing the user to grab a new position for the next note
                 ((TextView) GatherActivity.this.findViewById(R.id.subject)).setText("");
                 ((TextView) GatherActivity.this.findViewById(R.id.note)).setText("");
+                //set the field "currentNote" of the external class GatherActivity to null, so that a new
+                //notize will be created for the next time
                 GatherActivity.this.currentNote = null;
             }
         });
-        builder.setPositiveButton(R.string.no, new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                //In case the user pressed "no", do nothing, because the already existing note was
-                //already saved
+                //In case the user pressed "yes", do nothing, because the already existing note was
+                //already edited. The field "currentNote" keeps refering to the just edited note,
+                //so that the app keeps on updating its subject and thema the next time that the user
+                //presses "notiz speichern"
             }
         });
         builder.show();

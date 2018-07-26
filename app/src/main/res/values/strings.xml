@@ -21,6 +21,8 @@
     <string name="edit_note">Notiz weiter bearbeiten?</string>
     <string name="yes">Ja</string>
     <string name="no">Nein</string>
+    <string name="note_sucessfully_created">The new note and subject was sucessfully saved</string>
+    <string name="note_sucessfully_edited">The existing note was sucessfully updated with new thema and subject</string>
     <string-array name="spinner_provider">
         <item>EXAMPLE1:passive</item>
         <item>EXAMPLE2:gps</item>
