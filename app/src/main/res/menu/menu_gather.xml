@@ -1,7 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--This xml defines the items on the menu of the activity GatherActivity of this app-->
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="android.and06.geonotes.GatherActivity">
+
+    <!--Two visible icons:-->
+    <item android:id="@+id/menu_choose_project"
+        android:title="Projekt auswählen"
+        android:icon="@android:drawable/ic_menu_set_as"
+        android:showAsAction="ifRoom"/>
+    <item android:id="@+id/menu_edit_project"
+        android:title="Projektnamen ergänzen"
+        android:icon="@android:drawable/ic_menu_edit"
+        android:showAsAction="ifRoom"/>
+
+    <!--Menu in the overflow icon (aka. drei-punkte-icon):-->
     <item android:id="@+id/action_settings"
         android:title="@string/action_settings"
         android:orderInCategory="100"
@@ -22,4 +36,6 @@
             </group>
         </menu>
     </item>
+
+
 </menu>

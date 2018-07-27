@@ -122,6 +122,12 @@ public class GatherActivity extends Activity {
                 minDistance = 100;
                 Toast.makeText(this, "Neues GPS-Intervall ausgewählt.\nBitte Lokalisierung neu starten.", Toast.LENGTH_LONG).show();
                 break;
+            case R.id.menu_edit_project:
+                openEditProjectDialog();
+                break;
+            case R.id.menu_choose_project:
+                openChooseProjectDialog();
+                break;
             default:
                 break;
         }
@@ -131,6 +137,16 @@ public class GatherActivity extends Activity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    //This method is triggered when the user presses the option button "choose project"
+    private void openChooseProjectDialog() {
+        Log.d(this.getClass().getSimpleName(), "Choose Proeject dialog would be opened here");
+    }
+
+    //This method is triggered when the user presses the option button "edit project"
+    private void openEditProjectDialog() {
+        Log.d(this.getClass().getSimpleName(), "Edit Project dialog would be opened here");
     }
 
     //When this activity is destroyed, we want to stop retrieving information from the gps, to save energy.
