@@ -106,6 +106,14 @@ public class GeoNotesDatabaseHelper extends SQLiteOpenHelper {
             values.put("description", description);
             return values;
         }
+
+        public String getDescription() {
+            return this.description;
+        }
+
+        public void setDescription(String description){
+            this.description = description;
+        }
     }
 
     //inner class for the table "Locations" according to the Object-relationales Mapping (AND07D S.23 Auf.2.4.)

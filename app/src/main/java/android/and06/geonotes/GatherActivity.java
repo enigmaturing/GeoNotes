@@ -20,6 +20,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 import com.google.android.gms.maps.model.LatLng;
+
+import org.w3c.dom.Text;
+
 import java.util.List;
 
 
@@ -147,6 +150,29 @@ public class GatherActivity extends Activity {
     //This method is triggered when the user presses the option button "edit project"
     private void openEditProjectDialog() {
         Log.d(this.getClass().getSimpleName(), "Edit Project dialog would be opened here");
+        //create an AlertDialog
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.project_title_alert_dialog);
+        //set an specific layout for the AlertDialog
+        final View dialogView = getLayoutInflater().inflate(R.layout.dialog_edit_project, null);
+        builder.setView(dialogView);
+        //set text of the layout
+        ((TextView) dialogView.findViewById(R.id.textview_dialog_editproject_id)).setText(currentProject.toString());
+        ((TextView) dialogView.findViewById(R.id.edittext_dialog_editproject_description)).setText(currentProject.getDescription());
+        //define actions of the buttons of the AlertDialog
+        builder.setPositiveButton("Übernehmen", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                //TODO: neue Projektbeschreibung übernehmen
+            }
+        });
+        builder.setNegativeButton("Abbrechen", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                //TODO: cancel
+            }
+        });
+        builder.show();
     }
 
     //When this activity is destroyed, we want to stop retrieving information from the gps, to save energy.
