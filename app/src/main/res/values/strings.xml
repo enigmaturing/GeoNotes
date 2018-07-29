@@ -24,6 +24,8 @@
     <string name="note_sucessfully_created">The new note and subject was sucessfully saved</string>
     <string name="note_sucessfully_edited">The existing note was sucessfully updated with new thema and subject</string>
     <string name="project_title_alert_dialog">Projectbeschreibung eingeben / ändern</string>
+    <string name="project_name_change">Übernehmen</string>
+    <string name="cancel">Abbrechen</string>
     <string-array name="spinner_provider">
         <item>EXAMPLE1:passive</item>
         <item>EXAMPLE2:gps</item>

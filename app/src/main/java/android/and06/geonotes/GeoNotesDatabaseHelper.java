@@ -95,7 +95,17 @@ public class GeoNotesDatabaseHelper extends SQLiteOpenHelper {
 
         @Override
         public String toString(){
-            return DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.SHORT).format(new Date(super.id));
+            //check if the actual project description is empty (the project is new)
+            if (description.length() == 0){
+                //in case that the project description is empty, the description returned must be the id converted in the long date format
+                //with no previous project description (because the project is new and there is still no description)
+                return (DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.SHORT).format(new Date(super.id)));
+            }else{
+                //in case that the project description is NOT empty, the description returned must be the project description plus the
+                //id converted in the short format
+                return ((description + " (" + DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(new Date(super.id))) + ")");
+            }
+
         }
 
         //this method returns the values contained in an object of the class Project, in form of a ContentValue

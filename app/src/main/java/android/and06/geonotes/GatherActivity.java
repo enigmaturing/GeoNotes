@@ -20,9 +20,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 import com.google.android.gms.maps.model.LatLng;
-
-import org.w3c.dom.Text;
-
 import java.util.List;
 
 
@@ -160,16 +157,25 @@ public class GatherActivity extends Activity {
         ((TextView) dialogView.findViewById(R.id.textview_dialog_editproject_id)).setText(currentProject.toString());
         ((TextView) dialogView.findViewById(R.id.edittext_dialog_editproject_description)).setText(currentProject.getDescription());
         //define actions of the buttons of the AlertDialog
-        builder.setPositiveButton("Übernehmen", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(R.string.project_name_change, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                //TODO: neue Projektbeschreibung übernehmen
+                //change project name
+                String description = ((TextView) dialogView.findViewById(R.id.edittext_dialog_editproject_description)).getText().toString().trim();
+                currentProject.setDescription(description);
+                //update name of the project in the textview "Aktuelles Project: "
+                TextView projectTitle = (TextView) GatherActivity.this.findViewById(R.id.actual_project);
+                projectTitle.setText(currentProject.toString());
+                //update name of the project in the databank
+                dbHelper.update(currentProject);
             }
         });
-        builder.setNegativeButton("Abbrechen", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                //TODO: cancel
+                //Because all we want to do here is to hide the AlertDiaslog, we do not have to implement nothing
+                //for this button. Nevertheless, we have to include the setNegativeButton, otherwise the Cancel
+                //button wouldn't be displayed.
             }
         });
         builder.show();
