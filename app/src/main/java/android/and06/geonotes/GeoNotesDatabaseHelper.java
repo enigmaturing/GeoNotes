@@ -2,6 +2,7 @@ package android.and06.geonotes;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -91,6 +92,14 @@ public class GeoNotesDatabaseHelper extends SQLiteOpenHelper {
 
         public Project(){
             this("", new Date().getTime());
+        }
+
+        //this constructor creates an object of the class Project, given a cursor pointing to a DB
+        //where projects are located. See AND07D S.45 Code 3.6.
+        public Project(Cursor cursor){
+            //call the constructor of this same class (Project), that matches the two types of parameters that
+            //I am providing: String and long
+            this(cursor.getString(cursor.getColumnIndex("project")), cursor.getLong(cursor.getColumnIndex("id")));
         }
 
         @Override
