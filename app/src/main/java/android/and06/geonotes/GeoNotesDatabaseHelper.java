@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class GeoNotesDatabaseHelper extends SQLiteOpenHelper {
@@ -249,6 +250,26 @@ public class GeoNotesDatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
         db.update(entity.tableName, entity.getContentValues(), "id=" + entity.getContentValues().get("id"), null);
         db.close();
+    }
+
+    //this method returns all the projects stored in the DB as an ArrayList of objects of the class Project
+    public ArrayList<Project> getProjects(){
+        //access to the db in reade mode and instantiate a Cursor object, to be able to iterate through the db
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.query("Projects", new String[]{"*"}, null, null, null, null, "id", null);
+        //define an Arraylist of objects of the entity-class Project
+        ArrayList<Project> result = new ArrayList<Project>();
+        //iterate through the DB
+        while (cursor.moveToNext()){
+            //create an object of the Entity-Class Project, using the new constructor Project(cursor) that we created for the Entity-Class Project
+            Project project = new Project(cursor);
+            //save each obejct of the class project  in the ArrayList
+            result.add(project);
+        }
+        //close db AND cursor!
+        cursor.close();
+        db.close();
+        return result;
     }
 
 }
