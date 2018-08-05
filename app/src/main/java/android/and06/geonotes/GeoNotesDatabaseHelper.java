@@ -187,6 +187,18 @@ public class GeoNotesDatabaseHelper extends SQLiteOpenHelper {
             this(new Date().getTime(), project, latitude, longitude, subject, note, null);
         }
 
+        //with this constructor it is possible to create a Note object with a given cursor pointing
+        //at a desired Note saved in the DB in the table Notes. (see AND07D S.49 Auf.3.8.)
+        public Note(Cursor cursor) {
+            this(cursor.getLong(cursor.getColumnIndex("id")),
+                 cursor.getLong(cursor.getColumnIndex("project")),
+                 cursor.getDouble(cursor.getColumnIndex("latitude")),
+                 cursor.getDouble(cursor.getColumnIndex("longitude")),
+                 cursor.getString(cursor.getColumnIndex("subject")),
+                 cursor.getString(cursor.getColumnIndex("note")),
+                 cursor.getBlob(cursor.getColumnIndex("data")));
+        }
+
         //this method returns the values contained in an object of the class Note, in form of a ContentValue
         @Override
         public ContentValues getContentValues(){
@@ -209,6 +221,14 @@ public class GeoNotesDatabaseHelper extends SQLiteOpenHelper {
         // setter for the private field (aka. instanzvariable) note
         public void setNote(String note){
             this.note = note;
+        }
+
+        public String getSubject() {
+            return this.subject;
+        }
+
+        public String getNote() {
+            return this.note;
         }
     }
 
@@ -270,6 +290,19 @@ public class GeoNotesDatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         db.close();
         return result;
+    }
+
+    //this method returns the lastNote present on the table Notes of a given project passed as parameter to the method (See AND07D S.48 Cod3.8.)
+    public Note getLastNote(Project project){
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.query("Notes", new String[]{"*"}, "project='" + project.id + "'", null, null, null, "id DESC", "1");
+        Note lastNote = null;
+        if (cursor.moveToNext()){
+            lastNote = new Note(cursor);
+        }
+        cursor.close();
+        db.close();
+        return lastNote;
     }
 
 }

@@ -21,6 +21,8 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 import com.google.android.gms.maps.model.LatLng;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -165,8 +167,17 @@ public class GatherActivity extends Activity {
         builder.setItems(projectNames, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int whichElement) {
+                //because projects is an arrayList, it has a method called get(whichElement), see here:
                 Log.d(GatherActivity.this.getClass().getSimpleName(), "Ausgewähltes Projekt: " + projects.get(whichElement));
-                //TODO: Projekt auswählen, TextView-Text anpassen und Notiz im ausgewählten Projekt anzeigen
+                //get chosen project:
+                currentProject = projects.get(whichElement);
+                //edit TextView with the name of the recent selected project:
+                TextView projectTitle = (TextView) GatherActivity.this.findViewById(R.id.actual_project);
+                projectTitle.setText(GatherActivity.this.getString(R.string.actual_project) + currentProject.toString());
+                //show last note from the selected project
+                currentNote = dbHelper.getLastNote(currentProject);
+                ((TextView)findViewById(R.id.subject)).setText(currentNote.getSubject());
+                ((TextView)findViewById(R.id.note)).setText(currentNote.getNote());
             }
         });
         builder.show();
