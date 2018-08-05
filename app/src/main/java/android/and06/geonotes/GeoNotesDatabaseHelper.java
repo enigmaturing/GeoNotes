@@ -305,4 +305,38 @@ public class GeoNotesDatabaseHelper extends SQLiteOpenHelper {
         return lastNote;
     }
 
+    public Note getPreviousNote(Note note) {
+        SQLiteDatabase db = getReadableDatabase();
+        //Using a cursor, Collect all of the notes within the project relating to the note passed through parameter
+        //of this methode, and whoe id is shorter to the id of the note passed through parameter.
+        String selection = String.format("project = '%d' AND id <'%s'", note.project, note.id);
+        //We order the elements iterating the table on id DESC, in that case, the first element will be the most
+        //closest note to the note passed through parameter, earlier to that one.
+        Cursor cursor = db.query("Notes", new String[] {"*"}, selection, null, null, null, "id DESC", "1");
+        Note previousNote = null;
+        //get the first note of the table, which will be the earlier to the note passed through parameter, because
+        //that is the way we have ordered that table
+        if (cursor.moveToNext())
+        {
+            previousNote = new Note(cursor);
+        }
+        cursor.close();
+        db.close();
+        return previousNote;
+    }
+
+    public Note getNextNote(Note note){
+        SQLiteDatabase db = getReadableDatabase();
+        String selection = String.format("project = '%d' AND id >'%s'", note.project, note.id);
+        Cursor cursor = db.query("Notes", new String[] {"*"}, selection, null, null, null, "id ASC", "1");
+        Note nextNote = null;
+        if (cursor.moveToNext())
+        {
+            nextNote = new Note(cursor);
+        }
+        cursor.close();
+        db.close();
+        return nextNote;
+    }
+
 }

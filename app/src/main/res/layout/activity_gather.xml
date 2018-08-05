@@ -48,6 +48,22 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/note"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/ic_media_previous"
+            android:layout_alignParentLeft="true"
+            android:onClick="onButtonPreviousNoteClick"/>
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/ic_media_next"
+            android:layout_alignParentRight="true"
+            android:onClick="onButtonNextNoteClick"/>
+    </RelativeLayout>
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

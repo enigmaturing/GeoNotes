@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -280,6 +281,38 @@ public class GatherActivity extends Activity {
         } else {
             removeLocationUpdates();
             Log.d(getClass().getSimpleName(), "Lokalisierung beendet");
+        }
+    }
+
+    public void onButtonPreviousNoteClick(View view) {
+        //Get the previous note to the actual one and show its content on the TextView
+        GeoNotesDatabaseHelper.Note previousNote = null;
+        if (currentNote == null){
+            previousNote = dbHelper.getLastNote(currentProject);
+        }else{
+            previousNote = dbHelper.getPreviousNote(currentNote);
+        }
+        if (previousNote == null) return;
+
+        currentNote = previousNote;
+
+        //Show subject and note on the corresponding textviews of the GatherActivity
+        ((TextView) findViewById(R.id.subject)).setText(currentNote.getSubject());
+        ((TextView) findViewById(R.id.note)).setText(currentNote.getNote());
+    }
+
+    public void onButtonNextNoteClick(View view) {
+        //Get the next note to the actual one and show its content on the TextView
+        if (currentNote == null) return;
+        GeoNotesDatabaseHelper.Note nextNote = dbHelper.getNextNote(currentNote);
+        if (nextNote == null){
+            currentNote = null;
+            ((TextView) findViewById(R.id.note)).setText("");
+            ((TextView) findViewById(R.id.subject)).setText("");
+        }else{
+            currentNote = nextNote;
+            ((TextView) findViewById(R.id.note)).setText(currentNote.getNote());
+            ((TextView) findViewById(R.id.subject)).setText(currentNote.getSubject());
         }
     }
 
