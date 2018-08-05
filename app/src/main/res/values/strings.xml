@@ -26,6 +26,8 @@
     <string name="project_title_alert_dialog">Projectbeschreibung eingeben / ändern</string>
     <string name="project_name_change">Übernehmen</string>
     <string name="cancel">Abbrechen</string>
+    <string name="no_project_saved_yet">Noch keine Projekte vorhanden</string>
+    <string name="choose_a_project">Projekt auswählen</string>
     <string-array name="spinner_provider">
         <item>EXAMPLE1:passive</item>
         <item>EXAMPLE2:gps</item>

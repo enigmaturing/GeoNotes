@@ -20,6 +20,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 import com.google.android.gms.maps.model.LatLng;
+
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -141,8 +143,36 @@ public class GatherActivity extends Activity {
 
     //This method is triggered when the user presses the option button "choose project"
     private void openChooseProjectDialog() {
-        Log.d(this.getClass().getSimpleName(), "Choose Proeject dialog would be opened here");
+        //read Projects from DB and save them in an ArrayList named projects
+        final ArrayList<GeoNotesDatabaseHelper.Project> projects = dbHelper.getProjects();
+        //continue to display the Project names on an alertDialog only if there are projects to show
+        if (projects.size() == 0){
+            Toast.makeText(this, R.string.no_project_saved_yet, Toast.LENGTH_LONG).show();
+            return;
+        }
+        //define a builder for the AlertDialog
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        //display a title for the alert dialog
+        builder.setTitle(R.string.choose_a_project);
+        //save the descriptionname of all projects in an arraylist callled items
+        ArrayList<String> items = new ArrayList<String>();
+        for (GeoNotesDatabaseHelper.Project p : projects){
+            items.add(p.toString());
+        }
+        //convert the projectNames from an ArrayList of Strings to an array of CharSequence with
+        //the method toArray() of the class ArrayList<E> (see AND07D pag.47)
+        CharSequence[] projectNames = items.toArray(new CharSequence[items.size()]);
+        builder.setItems(projectNames, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int whichElement) {
+                Log.d(GatherActivity.this.getClass().getSimpleName(), "Ausgewähltes Projekt: " + projects.get(whichElement));
+                //TODO: Projekt auswählen, TextView-Text anpassen und Notiz im ausgewählten Projekt anzeigen
+            }
+        });
+        builder.show();
     }
+
+
 
     //This method is triggered when the user presses the option button "edit project"
     private void openEditProjectDialog() {
