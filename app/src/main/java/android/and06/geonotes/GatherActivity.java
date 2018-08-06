@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -21,12 +20,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 import com.google.android.gms.maps.model.LatLng;
-
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.List;
-
 
 public class GatherActivity extends Activity {
 
@@ -35,7 +30,7 @@ public class GatherActivity extends Activity {
     private int minDistance = 5; //Minimum distance between two sets of gps-positions (in m)
     private final NoteLocationListener locationListener = new NoteLocationListener();
     private GeoNotesDatabaseHelper dbHelper = null;
-    private  GeoNotesDatabaseHelper.Project currentProject;
+    private GeoNotesDatabaseHelper.Project currentProject;
     private GeoNotesDatabaseHelper.Note currentNote = null;  //this is the Note that was taken for the last time
     private Location lastLocation = null;
 
@@ -66,8 +61,39 @@ public class GatherActivity extends Activity {
         Log.i(getClass().getSimpleName(), showProperties(locationManager, (spinner.getSelectedItem().toString())));
         //Initialize the instance of the class GeoNotesDatabaseHelper that we have declared as private field above
         if (dbHelper == null) dbHelper = new GeoNotesDatabaseHelper(this);
-        //Initialize the project name when starting the app with the actual date and time
+        //Initialize the project name when starting the app with the actual date and time, if there is no last project found
         currentProject = new GeoNotesDatabaseHelper.Project();
+        //Get the id of the last project stored in sharedRefereces
+        long lastProjectID = getSharedPreferences("preferences", MODE_PRIVATE).getLong("lastProjectID", -1);
+        //Get the project corresponding to that id, depending on the value of the id
+        final GeoNotesDatabaseHelper.Project retrievedProject = dbHelper.getProject(lastProjectID);
+        //if the project with that id from sharedPreferences was NOT found in the table Projects, open a new one
+        //straightaway. If the project was found, show an AleryDialog asking the user if he wants to continue
+        //with the last opened project
+        if (retrievedProject != null){
+            //define a builder for the AlertDialog
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            //display a title for the alert dialog
+            builder.setTitle("Projekt \"" + retrievedProject.getDescription() + "\" weiter bearbeiten?");
+            builder.setNegativeButton("NEIN, NEUES PROJEKT ANLEGEN", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    //do nothing, a new project was already instanced to the variable currentProject
+                }
+            });
+            builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    //set de retrieved project as the current project
+                    currentProject = retrievedProject;
+                    currentNote = dbHelper.getLastNote(currentProject);
+                    ((TextView) findViewById(R.id.subject)).setText(currentNote.getSubject());
+                    ((TextView) findViewById(R.id.note)).setText(currentNote.getNote());
+                    ((TextView) findViewById(R.id.actual_project)).setText(getString(R.string.actual_project) + currentProject.toString());
+                }
+            });
+            builder.show();
+        }
         //Show project name on the textview with id actual_project (this is done thanks to the object currentProject of the inner class GenoTesDatabaseHelper.Project)
         ((TextView) findViewById(R.id.actual_project)).setText(getString(R.string.actual_project) + currentProject.toString());
     }
@@ -228,6 +254,9 @@ public class GatherActivity extends Activity {
     protected void onDestroy() {
         super.onDestroy();
         removeLocationUpdates();
+        //when leaving this activity (GatherActivity), we save the id of the actual project in the SharedPreferences
+        //as lastProjectID, in order to retrieve the same project when creating this activity again
+        getSharedPreferences("preferences", MODE_PRIVATE).edit().putLong("lastProjectID", currentProject.id).apply();
     }
 
     //When this activity goes to background, we want to stop retrieving information from the gps, to save energy.

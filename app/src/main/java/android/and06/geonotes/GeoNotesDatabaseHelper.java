@@ -339,4 +339,19 @@ public class GeoNotesDatabaseHelper extends SQLiteOpenHelper {
         return nextNote;
     }
 
+    // This method returns the project saved in the table "Projects", given a certain id as parameter (AND07D S.55 Auf.3.3)
+    public Project getProject(long id){
+        SQLiteDatabase db = getReadableDatabase();
+        String selection = String.format("id = '%s'", id);
+        Cursor cursor = db.query("Projects", new String[] {"*"}, selection, null, null, null, null, "1");
+        Project project = null;
+        if (cursor.moveToNext())
+        {
+            project = new Project(cursor);
+        }
+        cursor.close();
+        db.close();
+        return project;
+    }
+
 }
