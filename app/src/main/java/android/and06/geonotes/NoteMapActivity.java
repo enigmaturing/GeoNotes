@@ -66,7 +66,7 @@ public class NoteMapActivity extends Activity implements OnMapReadyCallback {
             // the innner-class MarkerInfoWindow (AND06 S.64)
             googleMap.setInfoWindowAdapter(new MarkerInfoWindow());
         }else{
-            Toast.makeText(this, R.string.no_actual_position, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.no_actual_note, Toast.LENGTH_SHORT).show();
         }
     }
     @Override

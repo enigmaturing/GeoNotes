@@ -5,7 +5,7 @@
     <string name="button_lokalisierung_on">LOKALISIERUNG GESTARTET</string>
     <string name="button_standort">STANDORT ANZEIGEN</string>
     <string name="title_geodaten_empfangen">Geodaten empfangen:</string>
-    <string name="no_actual_position">unbekannter Standort</string>
+    <string name="no_actual_note">Bitte Notiz auswählen oder speichern</string>
     <string name="empty_field_not_allowed">"Thema" und "Notiz" durfen nicht leer sein</string>
     <string name="actual_project">Aktuelles Projekt:\u0020</string>
     <string name="subject_title">Thema</string>

@@ -378,18 +378,17 @@ public class GatherActivity extends Activity {
     }
 
     //This method starts a new intent pointing to the NoteMapActivity, passing in the intent
-    //the actual position as a LatLang object
+    //the position of the actual note as a LatLang object, as well as its subject and note text
     public void onButtonShowPositionClick(View view) {
-        lastLocation = getLastKnownLocation();
-        if (lastLocation != null) {
+        if (currentProject != null) {
             //Define an intent and pass the following data: position, subject and note.
             Intent intent = new Intent(this, NoteMapActivity.class);
-            intent.putExtra("location", new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude()));
-            intent.putExtra("subject", (((TextView) findViewById(R.id.subject)).getText().toString()));
-            intent.putExtra("note", (((TextView) findViewById(R.id.note)).getText()).toString());
+            intent.putExtra("location", new LatLng(currentNote.latitude, currentNote.longitude));
+            intent.putExtra("subject", currentNote.subject);
+            intent.putExtra("note", currentNote.note);
             startActivity(intent);
         } else {
-            Toast.makeText(this, R.string.no_actual_position, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.no_actual_note, Toast.LENGTH_SHORT).show();
         }
     }
 
