@@ -6,6 +6,8 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -164,7 +166,9 @@ public class GeoNotesDatabaseHelper extends SQLiteOpenHelper {
     }
 
     //inner class for the table "Notes" according to the Object-relationales Mapping (AND07D S.23 Auf.2.5.)
-    public static class Note extends EntityWithId{
+    //This class implements the interface Parcelable, in order to be able to send objects of the
+    // class Notes from one activity to the other
+    public static class Note extends EntityWithId implements Parcelable{
 
         public final long project;
         public final double latitude;
@@ -173,7 +177,53 @@ public class GeoNotesDatabaseHelper extends SQLiteOpenHelper {
         public String note;
         public byte[] data;
 
-        public Note(long id, long project, double latitude, double longitude, String subject, String note, byte[] data){
+        //--------------------------------------------------------
+        //implementing the interface parcelable (see AND07D S.59):
+        public static final Creator<Note> CREATOR = new Creator<Note>() {
+            @Override
+            public Note createFromParcel(Parcel in) {
+                return new Note(in);
+            }
+
+            @Override
+            public Note[] newArray(int size) {
+                return new Note[size];
+            }
+        };
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        //the method writeToParcel of the interface Parcelable writes all of the Fields of the class Note in a Parcel object "parcel"
+        @Override
+        public void writeToParcel(Parcel parcel, int i) {
+            parcel.writeLong(id);
+            parcel.writeLong(project);
+            parcel.writeDouble(latitude);
+            parcel.writeDouble(longitude);
+            parcel.writeString(subject);
+            parcel.writeString(note);
+            parcel.writeByteArray(data);
+        }
+
+        //the new constructor of the class Note for the interface Parcelable reads all of the Fields of the class Note
+        //from the incomming Parcel object "in", in the same order as they where written by the method writeToParcel()
+        //and calls the constructor Note of the class Note with this().
+        private Note(Parcel in) {
+            this(in.readLong(),
+                 in.readLong(),
+                 in.readDouble(),
+                 in.readDouble(),
+                 in.readString(),
+                 in.readString(),
+                 in.createByteArray());
+        }
+        /* End of implementation of Parcelable-Interface*/
+        //----------------------------------------------------------
+
+        public Note (long id, long project, double latitude, double longitude, String subject, String note, byte[] data) {
             super("Notes", id);
             this.project = project;
             this.latitude = latitude;
@@ -230,6 +280,7 @@ public class GeoNotesDatabaseHelper extends SQLiteOpenHelper {
         public String getNote() {
             return this.note;
         }
+
     }
 
     //this method inserts the data providing of the method getContentValues in a given table of our DB

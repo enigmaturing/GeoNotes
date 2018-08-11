@@ -38,10 +38,13 @@ public class NoteMapActivity extends Activity implements OnMapReadyCallback {
     public void onMapReady(GoogleMap googleMap) {
         Bundle extras = getIntent().getExtras();
         if (extras != null){
-            //Get the actual position form the intent and set it as a marker on the map
-            LatLng position = (LatLng) extras.getParcelable("location");
-            String title = extras.getString("subject");
-            String snippet = extras.getString("note");
+            //Get an object currentNote from the extras contained in the intent that called this activity
+            GeoNotesDatabaseHelper.Note currentNote = (GeoNotesDatabaseHelper.Note) extras.getParcelable("currentNote");
+            LatLng position = new LatLng(currentNote.latitude, currentNote.longitude);
+            String title = currentNote.getSubject();
+            String snippet = currentNote.getNote();
+            //Set a marker on the map with the information provided by the note retrieved from the
+            // extras contained  in the intent.
             MarkerOptions options = new MarkerOptions()
                     .position(position)
                     .title(title)

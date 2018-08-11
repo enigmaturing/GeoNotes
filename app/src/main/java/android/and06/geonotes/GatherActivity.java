@@ -383,9 +383,10 @@ public class GatherActivity extends Activity {
         if (currentProject != null) {
             //Define an intent and pass the following data: position, subject and note.
             Intent intent = new Intent(this, NoteMapActivity.class);
-            intent.putExtra("location", new LatLng(currentNote.latitude, currentNote.longitude));
-            intent.putExtra("subject", currentNote.subject);
-            intent.putExtra("note", currentNote.note);
+            //The object currentNote is an instance of the inner entity class Note (see class GeoNotesDatabaseHelper)
+            //The class Note implements the interface Parcelable und therefore its objects can be sent from
+            //one activity to the other encapuslated in an intent.
+            intent.putExtra("currentNote", currentNote);
             startActivity(intent);
         } else {
             Toast.makeText(this, R.string.no_actual_note, Toast.LENGTH_SHORT).show();
