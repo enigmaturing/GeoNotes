@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -17,6 +16,8 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.util.ArrayList;
 
 public class NoteMapActivity extends Activity implements OnMapReadyCallback {
     // onCreate just shows the mapview as defined by activity_note_map.xml
@@ -38,6 +39,23 @@ public class NoteMapActivity extends Activity implements OnMapReadyCallback {
     public void onMapReady(GoogleMap googleMap) {
         Bundle extras = getIntent().getExtras();
         if (extras != null){
+            //Get the array containing all of the notes of this project
+            ArrayList<GeoNotesDatabaseHelper.Note> notes = extras.getParcelableArrayList("notes");
+            //Create a marker for each note in the project:
+            for (GeoNotesDatabaseHelper.Note note:notes){
+                LatLng position = new LatLng(note.latitude, note.longitude);
+                String title = note.getSubject();
+                String snippet = note.getNote();
+                //Set a marker on the map with the information provided by the note retrieved from the
+                // extras contained  in the intent.
+                MarkerOptions options = new MarkerOptions()
+                        .position(position)
+                        .title(title)
+                        .snippet(snippet)
+                        .anchor(0.5f,0.5f)
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.crosshair));
+                googleMap.addMarker(options);
+            }
             //Get an object currentNote from the extras contained in the intent that called this activity
             GeoNotesDatabaseHelper.Note currentNote = (GeoNotesDatabaseHelper.Note) extras.getParcelable("currentNote");
             LatLng position = new LatLng(currentNote.latitude, currentNote.longitude);

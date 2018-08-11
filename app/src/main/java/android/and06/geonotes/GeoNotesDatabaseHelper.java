@@ -405,4 +405,19 @@ public class GeoNotesDatabaseHelper extends SQLiteOpenHelper {
         return project;
     }
 
+    //AND07D S.62
+    //This method returns an ArrayList<Notes> containing all of the Notes of a given Project
+    public  ArrayList<Note> geoNotes(Project project){
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.query("Notes", new String[]{"*"},"project='" + project.id + "'", null, null, null, "id", null);
+        ArrayList<Note> notes = new ArrayList<Note>();
+        while (cursor.moveToNext()){
+            //store each note in the ArrayList, using the constructor that accepts a cursor as parameter
+            notes.add(new Note(cursor));
+        }
+        cursor.close();
+        db.close();
+        return notes;
+    }
+
 }

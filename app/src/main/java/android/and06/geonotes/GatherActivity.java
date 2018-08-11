@@ -387,6 +387,8 @@ public class GatherActivity extends Activity {
             //The class Note implements the interface Parcelable und therefore its objects can be sent from
             //one activity to the other encapuslated in an intent.
             intent.putExtra("currentNote", currentNote);
+            //insert also an ArrayList containing every note of the current project
+            intent.putExtra("notes", dbHelper.geoNotes(currentProject));
             startActivity(intent);
         } else {
             Toast.makeText(this, R.string.no_actual_note, Toast.LENGTH_SHORT).show();
