@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -16,10 +17,20 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-
 import java.util.ArrayList;
 
 public class NoteMapActivity extends Activity implements OnMapReadyCallback {
+
+    //in this ArrayList of Notes is where we store the notes read from the extras of an intent
+    //provided by the GatherActivity
+    private ArrayList<GeoNotesDatabaseHelper.Note> notes;
+    //index of the current shown note. We initializate it as -1, in order for the method onMapReady
+    //to detect if it is the first time that the NoteMapActiviy was run, so we can set a marker
+    //for each position in the extras of the intent, or not.
+    private int currentNoteIndex = -1;
+    //save the current note here:
+    private GeoNotesDatabaseHelper.Note currentNote;
+
     // onCreate just shows the mapview as defined by activity_note_map.xml
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,57 +50,92 @@ public class NoteMapActivity extends Activity implements OnMapReadyCallback {
     public void onMapReady(GoogleMap googleMap) {
         Bundle extras = getIntent().getExtras();
         if (extras != null){
-            //Get the array containing all of the notes of this project
-            ArrayList<GeoNotesDatabaseHelper.Note> notes = extras.getParcelableArrayList("notes");
-            //Create a marker for each note in the project:
-            for (GeoNotesDatabaseHelper.Note note:notes){
-                LatLng position = new LatLng(note.latitude, note.longitude);
-                String title = note.getSubject();
-                String snippet = note.getNote();
-                //Set a marker on the map with the information provided by the note retrieved from the
-                // extras contained  in the intent.
-                MarkerOptions options = new MarkerOptions()
-                        .position(position)
-                        .title(title)
-                        .snippet(snippet)
-                        .anchor(0.5f,0.5f)
-                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.crosshair));
-                googleMap.addMarker(options);
+            if (currentNoteIndex == -1) {
+                //Set all of the markers on the positions contained on the ArrayList contained on the
+                //extras sent with the intent from the GatherActivity. In order to to that:
+                //Get the array containing all of the notes of this project
+                notes = extras.getParcelableArrayList("notes");
+                //Create a marker for each note in the project:
+                for (GeoNotesDatabaseHelper.Note note : notes) {
+                    LatLng position = new LatLng(note.latitude, note.longitude);
+                    String title = note.getSubject();
+                    String snippet = note.getNote();
+                    //Set a marker on the map with the information provided by the note retrieved from the
+                    // extras contained  in the intent.
+                    MarkerOptions options = new MarkerOptions()
+                            .position(position)
+                            .title(title)
+                            .snippet(snippet)
+                            .anchor(0.5f, 0.5f)
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.crosshair));
+                    googleMap.addMarker(options);
+                }
+                //Get an object currentNote from the extras contained in the intent that called this activity
+                currentNote = (GeoNotesDatabaseHelper.Note) extras.getParcelable("currentNote");
+                //Get the index of the currentNote, that we are going to center the display on
+                currentNoteIndex = notes.indexOf(currentNote);
+                //center camera on the current note
+                centerCameraOnCurrentNote(googleMap, 18.0f);
+            }else{
+                //in this case, all of the markers were already set. Therefore we only need to center
+                // camera on the current note
+                centerCameraOnCurrentNote(googleMap, googleMap.getCameraPosition().zoom);
             }
-            //Get an object currentNote from the extras contained in the intent that called this activity
-            GeoNotesDatabaseHelper.Note currentNote = (GeoNotesDatabaseHelper.Note) extras.getParcelable("currentNote");
-            LatLng position = new LatLng(currentNote.latitude, currentNote.longitude);
-            String title = currentNote.getSubject();
-            String snippet = currentNote.getNote();
-            //Set a marker on the map with the information provided by the note retrieved from the
-            // extras contained  in the intent.
-            MarkerOptions options = new MarkerOptions()
-                    .position(position)
-                    .title(title)
-                    .snippet(snippet)
-                    .anchor(0.5f,0.5f)
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.crosshair));
-            googleMap.addMarker(options);
-            // Initialize a CameraPosition object in order to be able to show the map. This can
-            // be done in two ways:
-            // 1st: Specifying position, zoom, tilt and bearing. In that case we use the constructor
-            //      of the class CameraPosition:
-            CameraPosition cameraPosition = new CameraPosition(position, 18.0f, 0.0f,0.0f);
-            // 2nd: Using the factory method fromLatLngZoom() of the class CameraPosition.Builder.
-            // In that case there is no use of a constructor (it is a factory method that
-            // automatically returns an object of the class CamerPosition). In this case it is only
-            // possible to specify position and zoom (this second way is commented. Uncomment it
-            // and comment the first way to go that way.
-            //CameraPosition cameraPosition = CameraPosition.fromLatLngZoom(position, 10.0f);
-            CameraUpdate update = CameraUpdateFactory.newCameraPosition(cameraPosition);
-            googleMap.moveCamera(update);
-            //Set the marker on the googleMap with the layout inflated in
-            // the innner-class MarkerInfoWindow (AND06 S.64)
-            googleMap.setInfoWindowAdapter(new MarkerInfoWindow());
         }else{
-            Toast.makeText(this, R.string.no_actual_note, Toast.LENGTH_SHORT).show();
+            //if there are no notes in the extras of this intent, do not try to set a marker on those positions
+            Toast.makeText(this, R.string.no_knownLastPosition_available, Toast.LENGTH_SHORT).show();
         }
     }
+
+    private void centerCameraOnCurrentNote(GoogleMap googleMap, float zoom) {
+        //Get all of the information needed of the actual object Note
+        LatLng position = new LatLng(currentNote.latitude, currentNote.longitude);
+        String title = currentNote.getSubject();
+        String snippet = currentNote.getNote();
+        //Set a marker on the map with the information provided by the note retrieved from the
+        // extras contained  in the intent.
+        MarkerOptions options = new MarkerOptions()
+                .position(position)
+                .title(title)
+                .snippet(snippet)
+                .anchor(0.5f,0.5f)
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.crosshair));
+        googleMap.addMarker(options);
+        // Initialize a CameraPosition object in order to be able to show the map. This can
+        // be done in two ways:
+        // 1st: Specifying position, zoom, tilt and bearing. In that case we use the constructor
+        //      of the class CameraPosition:
+        CameraPosition cameraPosition = new CameraPosition(position, zoom, 0.0f,0.0f);
+        // 2nd: Using the factory method fromLatLngZoom() of the class CameraPosition.Builder.
+        // In that case there is no use of a constructor (it is a factory method that
+        // automatically returns an object of the class CamerPosition). In this case it is only
+        // possible to specify position and zoom (this second way is commented. Uncomment it
+        // and comment the first way to go that way.
+        //CameraPosition cameraPosition = CameraPosition.fromLatLngZoom(position, 10.0f);
+        CameraUpdate update = CameraUpdateFactory.newCameraPosition(cameraPosition);
+        googleMap.moveCamera(update);
+        //Set the marker on the googleMap with the layout inflated in
+        // the innner-class MarkerInfoWindow (AND06 S.64)
+        googleMap.setInfoWindowAdapter(new MarkerInfoWindow());
+    }
+
+    public void onButtonPreviousNoteClick(View view) {
+        //update the value of currentNoteIndex. If this is the first note in the ArrayList, go to the
+        //last one. If this is not the first note, go to the previus one. Whe can do that in a single
+        //line with the ternary-operator:
+        currentNoteIndex = (currentNoteIndex == 0) ? notes.size() - 1 : currentNoteIndex - 1;
+        currentNote = notes.get(currentNoteIndex);
+        MapView mapView = ((MapView)findViewById(R.id.mapview));
+        mapView.getMapAsync(this);
+    }
+
+    public void onButtonNextNoteClick(View view) {
+        currentNoteIndex = (currentNoteIndex == notes.size() - 1) ? 0: currentNoteIndex + 1;
+        currentNote = notes.get(currentNoteIndex);
+        MapView mapView = ((MapView)findViewById(R.id.mapview));
+        mapView.getMapAsync(this);
+    }
+
     @Override
     protected void onResume() {
         super.onResume();

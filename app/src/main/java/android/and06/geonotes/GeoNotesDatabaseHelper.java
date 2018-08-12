@@ -263,6 +263,17 @@ public class GeoNotesDatabaseHelper extends SQLiteOpenHelper {
             return values;
         }
 
+        //we override the method equals of this class Note, that is heritaged form the class object, in order
+        //to be able to use the indexOf method of the class ArrayList in a proper way (AND07D S.68)
+        @Override
+        public  boolean equals(Object other){
+            //if the field id of the objects being compared with the method equals are the same,
+            //return true. If not, return false
+            //If the second object if not of the class Note, return also false
+            if(other instanceof Note) return ((Note) other).id == id;
+            return false;
+        }
+
         // setter for the private field (aka. instanzvariable) subject
         public void setSubject(String subject){
             this.subject = subject;
