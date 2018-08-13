@@ -1,12 +1,12 @@
 package android.and06.geonotes;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -30,6 +30,8 @@ public class NoteMapActivity extends Activity implements OnMapReadyCallback {
     private int currentNoteIndex = -1;
     //save the current note here:
     private GeoNotesDatabaseHelper.Note currentNote;
+    //static final string for the onActivityResult-Method of the GatherActivity to get the CallBack-Parameter currentNote (see AND05D S.49)
+    public static final String CURRENT_NOTE = "currentNote";
 
     // onCreate just shows the mapview as defined by activity_note_map.xml
     @Override
@@ -134,6 +136,15 @@ public class NoteMapActivity extends Activity implements OnMapReadyCallback {
         currentNote = notes.get(currentNoteIndex);
         MapView mapView = ((MapView)findViewById(R.id.mapview));
         mapView.getMapAsync(this);
+    }
+
+    //triggered when the user presses the back key of his smartphone
+    @Override
+    public void onBackPressed(){
+        Intent pushIntent = this.getIntent();
+        pushIntent.putExtra("currentNote", currentNote);
+        setResult(Activity.RESULT_OK, pushIntent);
+        finish();
     }
 
     @Override

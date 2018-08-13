@@ -19,7 +19,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
-import com.google.android.gms.maps.model.LatLng;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -210,8 +209,6 @@ public class GatherActivity extends Activity {
         builder.show();
     }
 
-
-
     //This method is triggered when the user presses the option button "edit project"
     private void openEditProjectDialog() {
         Log.d(this.getClass().getSimpleName(), "Edit Project dialog would be opened here");
@@ -380,7 +377,7 @@ public class GatherActivity extends Activity {
     //This method starts a new intent pointing to the NoteMapActivity, passing in the intent
     //the position of the actual note as a LatLang object, as well as its subject and note text
     public void onButtonShowPositionClick(View view) {
-        if (currentProject != null) {
+        if (currentNote != null) {
             //Define an intent and pass the following data: position, subject and note.
             Intent intent = new Intent(this, NoteMapActivity.class);
             //The object currentNote is an instance of the inner entity class Note (see class GeoNotesDatabaseHelper)
@@ -389,9 +386,21 @@ public class GatherActivity extends Activity {
             intent.putExtra("currentNote", currentNote);
             //insert also an ArrayList containing every note of the current project
             intent.putExtra("notes", dbHelper.geoNotes(currentProject));
-            startActivity(intent);
+            startActivityForResult(intent,0);
         } else {
             Toast.makeText(this, R.string.no_actual_note, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    //Get the current note when comming form the NoteMapActivity
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent returnIntent){
+        Bundle extras = returnIntent.getExtras();
+        if (extras != null){
+            //show the note that was last selected on the activity that we are comming from "NoteMapActivity"
+            currentNote = (GeoNotesDatabaseHelper.Note) extras.getParcelable(NoteMapActivity.CURRENT_NOTE);
+            ((TextView) findViewById(R.id.subject)).setText(currentNote.getSubject());
+            ((TextView) findViewById(R.id.note)).setText(currentNote.getNote());
         }
     }
 
