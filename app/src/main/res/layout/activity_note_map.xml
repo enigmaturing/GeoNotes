@@ -18,5 +18,5 @@
         android:layout_height="wrap_content"
         android:src="@android:drawable/ic_media_next"
         android:layout_gravity="top|right"
-        android:onClick="onButtonNextNoteClick"/>
+        android:onClick="onButtonNextNoteClick" />
 </FrameLayout>
