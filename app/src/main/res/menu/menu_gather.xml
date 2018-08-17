@@ -5,37 +5,42 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="android.and06.geonotes.GatherActivity">
 
-    <!--Two visible icons:-->
+    <!--Icon buttons (only three will be visible in Portrait mode, counting the three dots as one of them):-->
     <item android:id="@+id/menu_choose_project"
-        android:title="Projekt auswählen"
+        android:title="@string/menu_title_item_chose_project"
         android:icon="@android:drawable/ic_menu_set_as"
         android:showAsAction="ifRoom"/>
+
     <item android:id="@+id/menu_edit_project"
-        android:title="Projektnamen ergänzen"
+        android:title="@string/menu_title_item_edit_project"
         android:icon="@android:drawable/ic_menu_edit"
+        android:showAsAction="ifRoom"/>
+
+    <item android:id="@+id/menu_delete_note"
+        android:title="@string/menu_title_item_delete_note"
+        android:icon="@android:drawable/ic_menu_delete"
         android:showAsAction="ifRoom"/>
 
     <!--Menu in the overflow icon (aka. drei-punkte-icon):-->
     <item android:id="@+id/action_settings"
-        android:title="@string/action_settings"
+        android:title="@string/menu_title_item_settings"
         android:orderInCategory="100"
         app:showAsAction="never">
         <menu>
             <group android:checkableBehavior="single">
-                <item android:title="@string/title_item_quiet"
+                <item android:title="@string/menu_title_item_quiet"
                     android:id="@+id/item_quiet" />
-                <item android:title="@string/title_item_foot"
+                <item android:title="@string/menu_title_item_foot"
                     android:id="@+id/item_foot"
                     android:checked="true"/>
-                <item android:title="@string/title_item_bicycle"
+                <item android:title="@string/menu_title_item_bicycle"
                     android:id="@+id/item_bicycle" />
-                <item android:title="@string/title_item_car"
+                <item android:title="@string/menu_title_item_car"
                     android:id="@+id/item_car"/>
-                <item android:title="@string/title_item_car_fast"
+                <item android:title="@string/menu_title_item_car_fast"
                     android:id="@+id/item_car_fast"/>
             </group>
         </menu>
     </item>
-
 
 </menu>

@@ -158,6 +158,9 @@ public class GatherActivity extends Activity {
             case R.id.menu_choose_project:
                 openChooseProjectDialog();
                 break;
+            case R.id.menu_delete_note:
+                deleteNote();
+                break;
             default:
                 break;
         }
@@ -167,6 +170,72 @@ public class GatherActivity extends Activity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void deleteNote() {
+        //If this is the last note in project, who an AlertDialog informing the user that deleting
+        //this note implies deleting the project. The currentNote is the last note in the project
+        //if both of the methods: "getPreviousNote and getNextNote" referred to the actual
+        //note return null
+        if (currentNote == null) {
+            Toast.makeText(this, R.string.select_a_note_before_pressing_delete,
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (dbHelper.getPreviousNote(currentNote) == null &&
+            dbHelper.getNextNote(currentNote) == null) {
+            //define a builder for the AlertDialog
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            //display a title for the alert dialog
+            builder.setTitle(R.string.confirm_deletion);
+            builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    //do nothing in case that the user selects "no" on confirming deletion
+                }
+            });
+            builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    //delete the current project in case that the user confirms the deletion
+                    if (dbHelper.delete(currentProject) < 0) {
+                        //inform the user in case of an error on deleting the project
+                        Toast.makeText(GatherActivity.this,
+                                R.string.project_not_deleted,
+                                Toast.LENGTH_SHORT).show();
+                    } else {
+                        //if the note was sucessfully deleted, clear the TextViews note and subject
+                        //and create a new project because the last one was deleted.
+                        ((TextView) GatherActivity.this.findViewById(R.id.note)).setText("");
+                        ((TextView) GatherActivity.this.findViewById(R.id.subject)).setText("");
+                        //Initialize a new project
+                        currentProject = new GeoNotesDatabaseHelper.Project();
+                        //Refresh the content of the TextView with the name of the actual project
+                        ((TextView) findViewById(R.id.actual_project)).setText
+                                (getString(R.string.actual_project) + currentProject.toString());
+                        //Inform the user of the fact, that the project was sucessfully deleted
+                        Toast.makeText(GatherActivity.this,
+                                R.string.project_deleted, Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+            builder.show(); //show the AlertDialog
+        //in case that the project does not contain a single note, delete the actual note
+        }else {
+            if (dbHelper.delete(currentNote) < 0) {
+                //inform the user in case of an error on deleting the note
+                Toast.makeText(this, R.string.select_a_note_before_pressing_delete,
+                        Toast.LENGTH_SHORT).show();
+            } else {
+                //if the note was sucessfully deleted, clear the TextViews note and subject
+                ((TextView) GatherActivity.this.findViewById(R.id.note)).setText("");
+                ((TextView) GatherActivity.this.findViewById(R.id.subject)).setText("");
+                //set currentNote to null (because we are now displaying no note in the TextViews)
+                currentNote = null;
+                //Inform the user of the fact, that the note was sucessfully deleted
+                Toast.makeText(this, R.string.note_deleted, Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     //This method is triggered when the user presses the option button "choose project"
