@@ -5,7 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="android.and06.geonotes.GatherActivity">
 
-    <!--Icon buttons (only three will be visible in Portrait mode, counting the three dots as one of them):-->
+    <!--Icon buttons (only three of them will be visible in Portrait mode,
+    counting the three dots as one itself:-->
     <item android:id="@+id/menu_choose_project"
         android:title="@string/menu_title_item_chose_project"
         android:icon="@android:drawable/ic_menu_set_as"
@@ -42,5 +43,5 @@
             </group>
         </menu>
     </item>
-
 </menu>
+
