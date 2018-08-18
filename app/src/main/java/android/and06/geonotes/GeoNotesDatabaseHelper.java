@@ -9,8 +9,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
-import android.widget.Toast;
-
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -434,52 +432,37 @@ public class GeoNotesDatabaseHelper extends SQLiteOpenHelper {
     }
 
     //AND07D Einsendeaufg. 4b
-    //This method deletes a given note
-    public int delete(Note note){
-        //First of all, check if note is not empty. In case we try to delete a note that was
-        //typed by the user in the EditViews but not saved and the user presses "Delete note",
-        // the db.execSQL will throw an error, because note = null.
-        if (note == null){
-            Log.e(getClass().getSimpleName(), "ERROR! No note selected yet");
+    //This method deletes a given note or a project and excepts therefore only entities with id
+    public int delete(EntityWithId entity){
+        //First of all, check if entity is not null. In case we try, for example, to delete a note
+        //that was typed by the user in the EditViews but not saved before, the db.execSQL will
+        //throw an error, because there is no id associated to that entity and therefore.
+        //We want to prevent that runtime error from happening, therefore:
+        if (entity == null){
+            Log.e(getClass().getSimpleName(), "ERROR! No element to delete selected yet");
             return -1;
         }
-        //Now try to delete the note.
+        //Now try to delete the entity (Note or Project).
         //If the deletion was sucessful, return a 0. If it was unsuccessful, insert
         //an error message in the log and return -1. Returning this values help us to detect
-        //from the activity calling this method, if the deleting process was properly done
-        //and act consequently, deleting the text in both of the EditText: Subject and Note
+        //from the activity calling this method, if the deleting process was sucessfully carried out
+        //and then act consequently, deleting the text in both of the EditText: Subject and Note
         SQLiteDatabase db = getReadableDatabase();
+        //In order to delete the entity from the DB, we resolve the name of the table by
+        //checking which type of object refers the instance entity to: (we learnt the use of
+        //instanceof on AND07D S. 68)
+        String tableName = (entity instanceof Note) ? "Notes" : "Projects";
         try {
-            db.execSQL("DELETE FROM Notes WHERE id=" + note.id);
+            //Having resolved the name of the table, we delete the entity with the given id
+            //from that given table, using the method execSQL that the class SQLiteDatabase holds.
+            db.execSQL("DELETE FROM " + tableName + " WHERE id=" + entity.id);
             return 0;
         }catch (SQLException ex){
             Log.e(getClass().getSimpleName(),
-                 "ERROR! Not possible to delete the note with id " +
-                  note.id + ": " + ex.toString());
+                 "ERROR! Not possible to delete the entity with id " +
+                         entity.id + ": " + ex.toString());
             return -1;
         }
     }
 
-    //This method deletes a given project
-    public int delete(Project project){
-        //Check if the project is not null
-        if (project == null){
-            Log.e(getClass().getSimpleName(), "ERROR! No project selected");
-            return -1;
-        }
-        //try to delete the note. If it was possible, return a 1. If it was not possible, insert
-        //an error message in the log and return -1. Returning this values help us to detect
-        //from the activity calling this method, if the deleting process was properly done
-        //and in that case, delete the text in both of the EditText: Subject and Note
-        SQLiteDatabase db = getReadableDatabase();
-        try {
-            db.execSQL("DELETE FROM Projects WHERE id=" + project.id);
-            return 0;
-        }catch (SQLException ex){
-            Log.e(getClass().getSimpleName(),
-                 "ERROR! Not possible to delete the project with id " +
-                  project.id + ": " + ex.toString());
-            return -1;
-        }
-    }
 }

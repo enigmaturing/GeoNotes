@@ -227,7 +227,7 @@ public class GatherActivity extends Activity {
                 Toast.makeText(this, R.string.select_a_note_before_pressing_delete,
                         Toast.LENGTH_SHORT).show();
             } else {
-                //if the note was sucessfully deleted, clear the TextViews note and subject
+                //if the note was sucessfully deleted, clear the TextViews "note" and "subject"
                 ((TextView) GatherActivity.this.findViewById(R.id.note)).setText("");
                 ((TextView) GatherActivity.this.findViewById(R.id.subject)).setText("");
                 //set currentNote to null (because we are now displaying no note in the TextViews)
