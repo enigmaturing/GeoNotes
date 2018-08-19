@@ -432,32 +432,33 @@ public class GeoNotesDatabaseHelper extends SQLiteOpenHelper {
     }
 
     //AND07D Einsendeaufg. 4b
-    //This method deletes a given note or a project and excepts therefore only entities with id
+    //This method deletes a given note or a project and excepts therefore only entities with id.
     public int delete(EntityWithId entity){
-        //First of all, check if entity is not null. In case we try, for example, to delete a note
-        //that was typed by the user in the EditViews but not saved before, the db.execSQL will
-        //throw an error, because there is no id associated to that entity and therefore.
+        //First of all, check if entity is not null. In case we'd try, for example, to delete a note
+        //that was typed by the user in the EditViews but not saved before, the method db.execSQL
+        //will throw an error, because there is no id associated to that Note at all.
         //We want to prevent that runtime error from happening, therefore:
         if (entity == null){
             Log.e(getClass().getSimpleName(), "ERROR! No element to delete selected yet");
             return -1;
         }
-        //Now try to delete the entity (Note or Project).
+        //Now try to delete the given entity (Note or Project).
         //If the deletion was sucessful, return a 0. If it was unsuccessful, insert
         //an error message in the log and return -1. Returning this values help us to detect
         //from the activity calling this method, if the deleting process was sucessfully carried out
-        //and then act consequently, deleting the text in both of the EditText: Subject and Note
+        //and then act consequently, deleting the text in both of the EditText: Subject and Note.
         SQLiteDatabase db = getReadableDatabase();
         //In order to delete the entity from the DB, we resolve the name of the table by
-        //checking which type of object refers the instance entity to: (we learnt the use of
-        //instanceof on AND07D S. 68)
+        //checking which type of object refers the instance "entity" to. (We learnt the use of
+        //the reserved word instanceof on AND07D S. 68).
         String tableName = (entity instanceof Note) ? "Notes" : "Projects";
         try {
             //Having resolved the name of the table, we delete the entity with the given id
-            //from that given table, using the method execSQL that the class SQLiteDatabase holds.
+            //from the given table, using the method execSQL that the class SQLiteDatabase holds.
             db.execSQL("DELETE FROM " + tableName + " WHERE id=" + entity.id);
             return 0;
         }catch (SQLException ex){
+            //if the deletion was not possible, protocol this in logcat and return a -1.
             Log.e(getClass().getSimpleName(),
                  "ERROR! Not possible to delete the entity with id " +
                          entity.id + ": " + ex.toString());

@@ -182,7 +182,7 @@ public class GatherActivity extends Activity {
                     Toast.LENGTH_SHORT).show();
             return;
         }
-        if (dbHelper.getPreviousNote(currentNote) == null &&
+        if (dbHelper.getPreviousNote(currentNote) == null &
             dbHelper.getNextNote(currentNote) == null) {
             //define a builder for the AlertDialog
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
