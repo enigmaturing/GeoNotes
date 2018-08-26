@@ -60,41 +60,63 @@ public class GatherActivity extends Activity {
         Log.i(getClass().getSimpleName(), showProperties(locationManager, (spinner.getSelectedItem().toString())));
         //Initialize the instance of the class GeoNotesDatabaseHelper that we have declared as private field above
         if (dbHelper == null) dbHelper = new GeoNotesDatabaseHelper(this);
-        //Initialize the project name when starting the app with the actual date and time, if there is no last project found
-        currentProject = new GeoNotesDatabaseHelper.Project();
-        //Get the id of the last project stored in sharedRefereces
-        long lastProjectID = getSharedPreferences("preferences", MODE_PRIVATE).getLong("lastProjectID", -1);
-        //Get the project corresponding to that id, depending on the value of the id
-        final GeoNotesDatabaseHelper.Project retrievedProject = dbHelper.getProject(lastProjectID);
-        //if the project with that id from sharedPreferences was NOT found in the table Projects, open a new one
-        //straightaway. If the project was found, show an AleryDialog asking the user if he wants to continue
-        //with the last opened project
-        if (retrievedProject != null){
-            //define a builder for the AlertDialog
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            //display a title for the alert dialog
-            builder.setTitle("Projekt \"" + retrievedProject.getDescription() + "\" weiter bearbeiten?");
-            builder.setNegativeButton("NEIN, NEUES PROJEKT ANLEGEN", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    //do nothing, a new project was already instanced to the variable currentProject
-                }
-            });
-            builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    //set de retrieved project as the current project
-                    currentProject = retrievedProject;
-                    currentNote = dbHelper.getLastNote(currentProject);
-                    ((TextView) findViewById(R.id.subject)).setText(currentNote.getSubject());
-                    ((TextView) findViewById(R.id.note)).setText(currentNote.getNote());
-                    ((TextView) findViewById(R.id.actual_project)).setText(getString(R.string.actual_project) + currentProject.toString());
-                }
-            });
-            builder.show();
+        //AND08D S.18 Auf1.5:
+        //We now check if savedInstance is not null. If it is null, it means we are creating the activity right
+        //after it was fresh installed, and therefore we create a new Project and so on.
+        //If savedInstance is not null, it means the activty is being created after having saved a status
+        //of the activity by the overridden method onSaveInstanceState (for example, after a change of orientation)
+        //In that case, we must not create a new project, but we have to get the last project that is contained
+        //in the Bundle savedInstanceState.
+        if (savedInstanceState == null) {
+            //Initialize the project name when starting the app with the actual date and time, if there is no last project found
+            currentProject = new GeoNotesDatabaseHelper.Project();
+            //Get the id of the last project stored in sharedRefereces
+            long lastProjectID = getSharedPreferences("preferences", MODE_PRIVATE).getLong("lastProjectID", -1);
+            //Get the project corresponding to that id, depending on the value of the id
+            final GeoNotesDatabaseHelper.Project retrievedProject = dbHelper.getProject(lastProjectID);
+            //if the project with that id from sharedPreferences was NOT found in the table Projects, open a new one
+            //straightaway. If the project was found, show an AleryDialog asking the user if he wants to continue
+            //with the last opened project
+            if (retrievedProject != null) {
+                //define a builder for the AlertDialog
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                //display a title for the alert dialog
+                builder.setTitle("Projekt \"" + retrievedProject.getDescription() + "\" weiter bearbeiten?");
+                builder.setNegativeButton("NEIN, NEUES PROJEKT ANLEGEN", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        //do nothing, a new project was already instanced to the variable currentProject
+                    }
+                });
+                builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        //set de retrieved project as the current project
+                        currentProject = retrievedProject;
+                        currentNote = dbHelper.getLastNote(currentProject);
+                        ((TextView) findViewById(R.id.subject)).setText(currentNote.getSubject());
+                        ((TextView) findViewById(R.id.note)).setText(currentNote.getNote());
+                        ((TextView) findViewById(R.id.actual_project)).setText(getString(R.string.actual_project) + currentProject.toString());
+                    }
+                });
+                builder.show();
+            }
+        }else{
+            currentProject = savedInstanceState.getParcelable("currentProject");
+            currentNote = savedInstanceState.getParcelable("currentNote");
         }
         //Show project name on the textview with id actual_project (this is done thanks to the object currentProject of the inner class GenoTesDatabaseHelper.Project)
         ((TextView) findViewById(R.id.actual_project)).setText(getString(R.string.actual_project) + currentProject.toString());
+    }
+
+    //AND08D S.18 Auf.1.4.
+    //The method onSaveInstanceState is overridden in order for the objects currentProject and
+    //currentNote to be saved in the bundle that we then can get back with the method onRestoreInstanceState()
+    @Override
+    protected void onSaveInstanceState(Bundle outState){
+        super.onSaveInstanceState(outState);
+        outState.putParcelable("currentProject", currentProject);
+        outState.putParcelable("currentNote", currentNote);
     }
 
     // The method onCreateOptionsMenu(Menu menu) inflates the menu to select rad, pkw or pkw-fern.

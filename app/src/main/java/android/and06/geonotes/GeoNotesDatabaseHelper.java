@@ -160,7 +160,7 @@ public class GeoNotesDatabaseHelper extends SQLiteOpenHelper {
             super("Projects", id);
             this.description = description;
         }
-        So, now we have to make the TWO STEPS (AND07D S.60)
+        So, now we have to make the TWO STEPS (AND07D S.60) FOR THOSE TWO FIELDS
         1)We override the method writeToParcel, writing in the parcel the two fields of the class
         Project a String and a long, in that order:
         */
