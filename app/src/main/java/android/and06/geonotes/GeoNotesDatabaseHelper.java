@@ -85,7 +85,7 @@ public class GeoNotesDatabaseHelper extends SQLiteOpenHelper {
 
 
     //inner entity-class for the table "Projects", acording to the Object-relationales Mapping (AND07D S.20)
-    public static class Project extends  EntityWithId{
+    public static class Project extends  EntityWithId implements Parcelable{
         private String description;
 
         public Project(String description, long id){
@@ -136,6 +136,46 @@ public class GeoNotesDatabaseHelper extends SQLiteOpenHelper {
         public void setDescription(String description){
             this.description = description;
         }
+
+        //---- Here starts the implementation of the interface Parcelable for the class Project ----
+        public static final Creator<Project> CREATOR = new Creator<Project>() {
+            @Override
+            public Project createFromParcel(Parcel in) {
+                return new Project(in);
+            }
+
+            @Override
+            public Project[] newArray(int size) {
+                return new Project[size];
+            }
+        };
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        /*the constructor of the class Project accepts a String and a long:
+        public Project(String description, long id){
+            super("Projects", id);
+            this.description = description;
+        }
+        So, now we have to make the TWO STEPS (AND07D S.60)
+        1)We override the method writeToParcel, writing in the parcel the two fields of the class
+        Project a String and a long, in that order:
+        */
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeString(description);
+            dest.writeLong(id);
+        }
+        /* 2) We implement a new constructor for the class Project that accepts a parcel in which
+           we call that constructor with the two arguments String and long, in that order
+        */
+        public Project(Parcel parcel) {
+            this(parcel.readString(), parcel.readLong());
+        }
+        //---- Here ends the implementation of the interface Parcelable for the class Project ----
     }
 
     //inner class for the table "Locations" according to the Object-relationales Mapping (AND07D S.23 Auf.2.4.)
