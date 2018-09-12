@@ -27,6 +27,7 @@
     <string name="select_a_note_before_pressing_delete">Wählen Sie eine Notiz zum Löschen</string>
     <string name="confirm_deletion">Löschen der letzten Notiz löscht das Projekt. Fortfahren?</string>
     <string name="choose_a_project">Projekt auswählen</string>
+    <string name="menu_title_item_send_project">Projekt verschicken</string>
     <string name="menu_title_item_chose_project">Projekt auswählen</string>
     <string name="menu_title_item_edit_project">Projektnamen ergänzen</string>
     <string name="menu_title_item_delete_note">Notiz löschen</string>

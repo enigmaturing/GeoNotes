@@ -183,6 +183,9 @@ public class GatherActivity extends Activity {
             case R.id.menu_delete_note:
                 deleteNote();
                 break;
+            case R.id.menu_send_project:
+                sendProject();
+                break;
             default:
                 break;
         }
@@ -192,6 +195,11 @@ public class GatherActivity extends Activity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void sendProject() {
+        Toast.makeText(this, "Function not implementet yet", Toast.LENGTH_LONG).show();
+        //TODO implement this method to send a GPX project in an email with the help of the class GpxGenerator
     }
 
     private void deleteNote() {
