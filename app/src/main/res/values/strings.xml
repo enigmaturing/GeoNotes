@@ -10,6 +10,7 @@
     <string name="actual_project">Aktuelles Projekt:\u0020</string>
     <string name="subject_title">Thema</string>
     <string name="note_title">Notiz</string>
+    <string name="no_notes_available">keine Notizen vorhanden</string>
     <string name="button_save_title">NOTIZ SPEICHERN</string>
     <string name="no_knownLastPosition_available">Noch keine Geoposition ermittelt. Bitte später nochnmal versuchen</string>
     <string name="edit_note">Notiz weiter bearbeiten?</string>

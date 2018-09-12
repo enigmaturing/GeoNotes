@@ -8,7 +8,9 @@ import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -198,8 +200,27 @@ public class GatherActivity extends Activity {
     }
 
     private void sendProject() {
-        Toast.makeText(this, "Function not implementet yet", Toast.LENGTH_LONG).show();
-        //TODO implement this method to send a GPX project in an email with the help of the class GpxGenerator
+        //We check if the project has notes to be exported
+        ArrayList<GeoNotesDatabaseHelper.Note> notes = dbHelper.geoNotes(currentProject);
+        if (notes.size() == 0){
+            Toast.makeText(this, R.string.no_notes_available, Toast.LENGTH_LONG).show();
+            return;
+        }
+        //We check if the external storage is available, because we make use of it in the method
+        //serialize of the class GpxGenerator
+        if (!Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())){
+            Toast.makeText(this, "External Storage nicht verfügbar", Toast.LENGTH_LONG).show();
+            return;
+        }
+        //We make and implizit intent with an enclosed gpx file
+        Intent emailIntent = new Intent(Intent.ACTION_SEND);
+        emailIntent.setType("text/xml");
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"javier.glez.martin@gmail.com"});
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "GPX Project-export: " + currentProject.toString());
+        GpxGenerator gpxGenerator = new GpxGenerator();
+        Uri uriGpxFile = gpxGenerator.createGpxFile(notes);
+        emailIntent.putExtra(Intent.EXTRA_STREAM, uriGpxFile);
+        startActivity(Intent.createChooser(emailIntent, "Projekt verschicken"));
     }
 
     private void deleteNote() {

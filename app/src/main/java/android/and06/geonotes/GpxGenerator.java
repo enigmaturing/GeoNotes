@@ -3,15 +3,12 @@ package android.and06.geonotes;
 import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -23,6 +20,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 public class GpxGenerator {
+
     public Uri createGpxFile(ArrayList<GeoNotesDatabaseHelper.Note> notes){
         Document doc = this.createGpxDocument();
         createRootElement(doc);
