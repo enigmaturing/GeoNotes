@@ -188,6 +188,9 @@ public class GatherActivity extends Activity {
             case R.id.menu_send_project:
                 sendProject();
                 break;
+            case R.id.menu_open_osm:
+                openOSM();
+                break;
             default:
                 break;
         }
@@ -197,6 +200,12 @@ public class GatherActivity extends Activity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void openOSM(){
+        //This method starts the activity OsmWebViewActivity, to show the map of OpenStreetMap
+        Intent intent = new Intent(this, OsmWebViewActivity.class);
+        startActivity(intent);
     }
 
     private void sendProject() {

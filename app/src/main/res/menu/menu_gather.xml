@@ -27,6 +27,11 @@
         android:icon="@android:drawable/ic_menu_send"
         android:showAsAction="ifRoom"/>
 
+    <item android:id="@+id/menu_open_osm"
+        android:title="@string/menu_title_item_show_in_osm"
+        android:icon="@android:drawable/ic_menu_directions"
+        android:showAsAction="ifRoom"/>
+
     <!--Menu in the overflow icon (aka. drei-punkte-icon):-->
     <item android:id="@+id/action_settings"
         android:title="@string/menu_title_item_settings"
