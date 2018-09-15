@@ -21,9 +21,10 @@ import javax.xml.transform.stream.StreamResult;
 
 public class GpxGenerator {
 
-    public Uri createGpxFile(ArrayList<GeoNotesDatabaseHelper.Note> notes){
+    public Uri createGpxFile(ArrayList<GeoNotesDatabaseHelper.Note> notes, String projectName){
         Document doc = this.createGpxDocument();
         createRootElement(doc);
+        createMetadata(doc, projectName);
         appendTrackPoints(doc, notes);
         return serialize(doc);
     }
@@ -47,6 +48,16 @@ public class GpxGenerator {
         }
         //We return the created document
         return gpxDocument;
+    }
+
+    //This method associates metadata to the given gpx document. This metadata holds a child element
+    //of type desc (description), containing the name of the project
+    private void createMetadata(Document doc, String projectName){
+        Element metadata = doc.createElement("metadata");
+        doc.getDocumentElement().appendChild(metadata);
+        Element name = doc.createElement("desc");
+        name.appendChild(doc.createTextNode(projectName));
+        metadata.appendChild(name);
     }
 
     private void createRootElement(Document doc){

@@ -218,7 +218,8 @@ public class GatherActivity extends Activity {
         emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"javier.glez.martin@gmail.com"});
         emailIntent.putExtra(Intent.EXTRA_SUBJECT, "GPX Project-export: " + currentProject.toString());
         GpxGenerator gpxGenerator = new GpxGenerator();
-        Uri uriGpxFile = gpxGenerator.createGpxFile(notes);
+        //create a gpxfile containing all of the notes of the actual project
+        Uri uriGpxFile = gpxGenerator.createGpxFile(notes, currentProject.toString());
         emailIntent.putExtra(Intent.EXTRA_STREAM, uriGpxFile);
         startActivity(Intent.createChooser(emailIntent, "Projekt verschicken"));
     }
