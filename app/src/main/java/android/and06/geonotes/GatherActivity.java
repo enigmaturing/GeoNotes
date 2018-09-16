@@ -203,8 +203,18 @@ public class GatherActivity extends Activity {
     }
 
     private void openOSM(){
+        //We check if the project has notes to be exported
+        ArrayList<GeoNotesDatabaseHelper.Note> notes = dbHelper.geoNotes(currentProject);
+        if (notes.size() == 0){
+            Toast.makeText(this, R.string.no_notes_available, Toast.LENGTH_LONG).show();
+            return;
+        }
         //This method starts the activity OsmWebViewActivity, to show the map of OpenStreetMap
         Intent intent = new Intent(this, OsmWebViewActivity.class);
+        //We insert the current notes in the intent as a Bundle
+        //(the class Note implements already the interface parcelable and therefore that object can be sent in an intent)
+        intent.putParcelableArrayListExtra("currentNotes", notes);
+        intent.putExtra("currentNote", currentNote);
         startActivity(intent);
     }
 
