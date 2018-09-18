@@ -31,10 +31,9 @@ public class OsmWebViewActivity extends Activity {
         Bundle extras = getIntent().getExtras();
         //But only if there are notes saved in the extras
         if (extras == null) return;
-
         //We retrieve the notes in the extras with the method getParcelable
         //We need to define the variable nots as final, because we will acess to it from an inner class later on (class WebInterface)
-        final ArrayList<GeoNotesDatabaseHelper.Note> notes = extras.getParcelableArrayList("currentNotes");
+        final ArrayList<GeoNotesDatabaseHelper.Note> notes = extras.getParcelableArrayList("notes");
         //We also get the index of the note that was selected before prssing the button "show on OSM"
         GeoNotesDatabaseHelper.Note currentNote = (GeoNotesDatabaseHelper.Note) extras.getParcelable("currentNote");
         final int currentNoteIndex = notes.indexOf(currentNote);

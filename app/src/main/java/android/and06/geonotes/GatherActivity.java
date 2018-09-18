@@ -514,19 +514,25 @@ public class GatherActivity extends Activity {
                 "erfordert Satellit: " + (locationManager.getProvider(provider).requiresSatellite()));
     }
 
-    //This method starts a new intent pointing to the NoteMapActivity, passing in the intent
-    //the position of the actual note as a LatLang object, as well as its subject and note text
+    //This method starts a new implicit intent (it was explicit until we did AND08D Einsendeauf.3)
+    // passing in the intent the position of the actual note as a LatLang object, as well as its subject and note text
     public void onButtonShowPositionClick(View view) {
         if (currentNote != null) {
             //Define an intent and pass the following data: position, subject and note.
-            Intent intent = new Intent(this, NoteMapActivity.class);
+            //Intent intent = new Intent(this, NoteMapActivity.class);
+            //As in AND08D Einsendauf. 3, we now want to let the user decide which app to open to show his notes on the map
+            //Therefore, we have uncommented the previous way to define this intent as an explicit intent. We now define
+            //the intent as a implicit intent of action "android.and06.geonotes.LOCALIZE" (see AndroidManifest.xml)
+            Intent intent = new Intent("android.and06.geonotes.LOCALIZE");
             //The object currentNote is an instance of the inner entity class Note (see class GeoNotesDatabaseHelper)
             //The class Note implements the interface Parcelable und therefore its objects can be sent from
             //one activity to the other encapuslated in an intent.
             intent.putExtra("currentNote", currentNote);
             //insert also an ArrayList containing every note of the current project
             intent.putExtra("notes", dbHelper.geoNotes(currentProject));
-            startActivityForResult(intent,0);
+            //As in AND08D Einsendauf. 3, we now want to let the user decide which app to open to show his notes on the map
+            //startActivityForResult(intent,0);
+            startActivityForResult(Intent.createChooser(intent, "Notizen lokalisieren"), 0);
         } else {
             Toast.makeText(this, R.string.no_actual_note, Toast.LENGTH_SHORT).show();
         }

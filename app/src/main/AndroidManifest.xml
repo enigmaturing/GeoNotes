@@ -19,7 +19,6 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true">
-        <activity android:name=".NoteMapActivity" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -36,7 +35,24 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".OsmWebViewActivity"></activity>
+
+        <activity android:name=".OsmWebViewActivity">
+            <!--This intent filter is added in order to make it possible to call a implicit intent
+            with the view of a map. This is part of AND08D Einsendaufg. 3-->
+            <intent-filter>
+                <action android:name="android.and06.geonotes.LOCALIZE"></action>
+                <category android:name="android.intent.category.DEFAULT"></category>
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".NoteMapActivity">
+            <!--This intent filter is added in order to make it possible to call a implicit intent
+            with the view of a map. This is part of AND08D Einsendaufg. 3-->
+            <intent-filter>
+                <action android:name="android.and06.geonotes.LOCALIZE"></action>
+                <category android:name="android.intent.category.DEFAULT"></category>
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
