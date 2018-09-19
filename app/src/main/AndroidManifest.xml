@@ -36,18 +36,26 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".OsmWebViewActivity">
-            <!--This intent filter is added in order to make it possible to call a implicit intent
-            with the view of a map. This is part of AND08D Einsendaufg. 3-->
+        <activity
+            android:name=".OsmWebViewActivity"
+            android:label="OsmWebViewActivity">
+            <!-- The element label defines the text to be shown as title of the activity
+            on the chooser of the implicit event-->
+            <!--The following intent filter is added in order enable an implicit intent
+            to show the position on a map. This is part of AND08D Einsendaufg. 3-->
             <intent-filter>
                 <action android:name="android.and06.geonotes.LOCALIZE"></action>
                 <category android:name="android.intent.category.DEFAULT"></category>
             </intent-filter>
         </activity>
 
-        <activity android:name=".NoteMapActivity">
-            <!--This intent filter is added in order to make it possible to call a implicit intent
-            with the view of a map. This is part of AND08D Einsendaufg. 3-->
+        <activity
+            android:name=".NoteMapActivity"
+            android:label="NoteMapActivity">
+            <!-- The element label defines the text to be shown as title of the activity
+            on the chooser of the implicit event-->
+            <!--The following intent filter is added in order enable an implicit intent
+            to show the position on a map. This is part of AND08D Einsendaufg. 3-->
             <intent-filter>
                 <action android:name="android.and06.geonotes.LOCALIZE"></action>
                 <category android:name="android.intent.category.DEFAULT"></category>

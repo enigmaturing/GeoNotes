@@ -32,7 +32,7 @@
     <string name="menu_title_item_chose_project">Projekt auswählen</string>
     <string name="menu_title_item_edit_project">Projektnamen ergänzen</string>
     <string name="menu_title_item_delete_note">Notiz löschen</string>
-    <string name="menu_title_item_show_in_osm">Auf OSM anzeigen</string>
+    <string name="menu_title_item_open_browser">Browser starten</string>
     <string name="menu_title_item_settings">Settings</string>
     <string name="menu_title_item_quiet">Nicht in Bewegung</string>
     <string name="menu_title_item_foot">Zu Fuß (9 sec/10 m)</string>

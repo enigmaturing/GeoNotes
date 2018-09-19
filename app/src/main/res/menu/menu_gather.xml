@@ -28,7 +28,7 @@
         android:showAsAction="ifRoom"/>
 
     <item android:id="@+id/menu_open_osm"
-        android:title="@string/menu_title_item_show_in_osm"
+        android:title="@string/menu_title_item_open_browser"
         android:icon="@android:drawable/ic_menu_directions"
         android:showAsAction="ifRoom"/>
 
