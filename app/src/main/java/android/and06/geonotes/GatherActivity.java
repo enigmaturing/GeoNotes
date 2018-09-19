@@ -190,17 +190,22 @@ public class GatherActivity extends Activity {
                 break;
             case R.id.menu_open_osm:
                 //openOSM();
-                //AND08D Einsendaufg. 4b Open webbrowser as implicit intent
+                //AND08D Einsendaufg. 4b: Open webbrowser as implicit intent
                 //We use here the constant ACTION_VIEW, setting the dato to the desired uri
                 //String uri = "http://www.google.de";
-                //AND08D Einsendaufg. 4c Open webbrowser with googlemaps pointing to the position of the actual note
+                //AND08D Einsendaufg. 4c: Open webbrowser with googlemaps pointing to the position of the actual note
                 //In order to do that, the latitude and the longitude of the currentNote is retrieved and
                 //concatenated as a string to the http web address of google maps that allows showing a given
                 //position on the webbrowser
-                String uri = "http://www.google.de/maps/?q=" + currentNote.latitude + "," + currentNote.longitude + ")";
-                Intent intentOpenInternetBrowser = new Intent(Intent.ACTION_VIEW);
-                intentOpenInternetBrowser.setData(Uri.parse(uri));
-                startActivity(intentOpenInternetBrowser);
+                if (currentNote == null) {
+                    Toast.makeText(this, R.string.select_a_note_before_pressing_delete,
+                            Toast.LENGTH_SHORT).show();
+                }else {
+                    String uri = "http://www.google.de/maps/?q=" + currentNote.latitude + "," + currentNote.longitude + ")";
+                    Intent intentOpenInternetBrowser = new Intent(Intent.ACTION_VIEW);
+                    intentOpenInternetBrowser.setData(Uri.parse(uri));
+                    startActivity(intentOpenInternetBrowser);
+                }
                 break;
             default:
                 break;
